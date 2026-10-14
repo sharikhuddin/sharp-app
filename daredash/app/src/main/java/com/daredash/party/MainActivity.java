@@ -2,6 +2,9 @@ package com.daredash.party;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -61,6 +64,75 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         ads = new AdsManager(this);
         billing = new BillingManager(this, this);
         showHome();
+        handleInvite(getIntent());
+        ads.start(() -> {
+            // Consent changes are reflected on the next screen; do not interrupt a live challenge.
+            if (!inGame && !isFinishing()) showHome();
+        });
+    }
+
+    @Override protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleInvite(intent);
+    }
+
+    private void handleInvite(Intent intent) {
+        if (intent == null || intent.getData() == null) return;
+        Uri uri = intent.getData();
+        if (!"daredash".equals(uri.getScheme()) || !"invite".equals(uri.getHost())) return;
+        String names = uri.getQueryParameter("players");
+        if (names == null || names.length() > 500) return;
+        int added = 0;
+        for (String candidate : names.split(",")) {
+            String name = candidate.trim();
+            if (name.length() < 1 || name.length() > 24 || players.size() >= 8) continue;
+            boolean duplicate = false;
+            for (String existing : players) if (existing.equalsIgnoreCase(name)) duplicate = true;
+            if (!duplicate) { players.add(name); added++; }
+        }
+        if (added > 0) {
+            showHome();
+            toast("Imported " + added + " player(s). This invite sets up a local game; it does not sync live turns.");
+        }
+    }
+
+    private void shareInvite() {
+        StringBuilder names = new StringBuilder();
+        for (String player : players) {
+            if (names.length() > 0) names.append(',');
+            names.append(player.replace(",", " "));
+        }
+        String invitation = "daredash://invite?players=" + Uri.encode(names.toString());
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT,
+            "Join our DareDash party! We play together on one phone. " +
+            "Add your name to the host's game. You can also import our player list on your phone if DareDash is installed: " + invitation);
+        startActivity(Intent.createChooser(share, "Invite friends with WhatsApp, SMS or more"));
+    }
+
+    private void addMultiplePlayers() {
+        EditText field = new EditText(this);
+        field.setHint("Amina, Sami, Hassan");
+        field.setSingleLine(false);
+        new android.app.AlertDialog.Builder(this)
+            .setTitle("Add several friends")
+            .setMessage("Separate names with commas. Maximum 8 total players.")
+            .setView(field)
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Add players", (d, which) -> {
+                int added = 0;
+                for (String raw : field.getText().toString().split(",")) {
+                    String name = raw.trim();
+                    if (name.isEmpty() || name.length() > 24 || players.size() >= 8) continue;
+                    boolean exists = false;
+                    for (String existing : players) if (existing.equalsIgnoreCase(name)) exists = true;
+                    if (!exists) { players.add(name); added++; }
+                }
+                toast("Added " + added + " friends.");
+                showHome();
+            }).show();
     }
 
     private int dp(float value) { return Math.round(getResources().getDisplayMetrics().density * value); }
@@ -144,7 +216,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
     private void addBanner() {
         if (noAds) return;
         gap(main, 18);
-        TextView label = text("AD · TEST INVENTORY", 10, MUTED, false);
+        TextView label = text(BuildConfig.DEBUG ? "AD · TEST INVENTORY" : "ADVERTISEMENT", 10, MUTED, false);
         label.setGravity(Gravity.CENTER);
         main.addView(label);
         gap(main, 5);
@@ -152,7 +224,8 @@ public final class MainActivity extends Activity implements BillingManager.Liste
             banner = ads.makeBanner();
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, dp(55));
             params.gravity = Gravity.CENTER_HORIZONTAL;
-            main.addView(banner, params);
+            if (banner != null) main.addView(banner, params);
+            else main.removeView(label);
         } catch (Exception ignored) { /* Offline party play remains usable. */ }
     }
 
@@ -188,6 +261,12 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         p.leftMargin = dp(8);
         add.addView(plus, p);
         main.addView(add);
+        gap(main, 10);
+        main.addView(action("👥  Add several friends", PANEL, WHITE, this::addMultiplePlayers));
+        gap(main, 10);
+        main.addView(action("📨  Invite via WhatsApp, SMS or any app", PANEL, WHITE, this::shareInvite));
+        gap(main, 7);
+        main.addView(text("Invitations are for pass-and-play on one phone. Remote synchronized rooms need an online backend.", 12, MUTED, false));
         gap(main, 20);
         main.addView(text("CHOOSE A GAME", 13, GOLD, true));
         gap(main, 9);
@@ -196,6 +275,9 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         main.addView(action("LET'S PLAY  →", PURPLE, WHITE, this::startGame));
         gap(main, 10);
         main.addView(action("🔒  Premium packs & upgrades", PANEL, WHITE, this::showShop));
+        gap(main, 9);
+        main.addView(action("⚙  Advertising privacy choices", PANEL, WHITE,
+            () -> ads.showPrivacyOptions(() -> { if (!inGame) showHome(); })));
         gap(main, 14);
         main.addView(text("No sign-up needed  •  120 free cards  •  Play offline", 12, MUTED, false));
         addBanner();
@@ -203,6 +285,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
 
     private void addPlayer() {
         String player = input.getText().toString().trim();
+        if (player.length() > 24) { toast("Names must be 24 characters or fewer."); return; }
         if (player.isEmpty()) { toast("Enter a player name first."); return; }
         if (players.size() >= 8) { toast("Maximum 8 players per game."); return; }
         for (String p : players) if (p.equalsIgnoreCase(player)) { toast("Name already in use."); return; }
@@ -375,12 +458,12 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         showPage("Keep the laughs going with optional upgrades.");
         tile("✨ All premium challenge packs", "Unlock Chaos Mode and Duos: 24 more original challenges. One-time purchase, not a subscription.", "🎁");
         gap(main, 11);
-        main.addView(action(premium ? "✓ Premium packs unlocked" : "Unlock premium packs on Google Play", PURPLE, WHITE,
+        main.addView(action(premium ? "✓ Premium packs unlocked" : "Unlock packs · " + billing.displayPrice(BillingManager.ALL_PACKS), PURPLE, WHITE,
             () -> { if (!premium) billing.buy(BillingManager.ALL_PACKS); }));
         gap(main, 18);
         tile("🚫 Remove banner ads", "One-time upgrade. Rewarded videos become optional free re-roll claims instead.", "⚡");
         gap(main, 11);
-        main.addView(action(noAds ? "✓ Banner ads removed" : "Remove ads via Google Play", PURPLE, WHITE,
+        main.addView(action(noAds ? "✓ Banner ads removed" : "Remove ads · " + billing.displayPrice(BillingManager.REMOVE_ADS), PURPLE, WHITE,
             () -> { if (!noAds) billing.buy(BillingManager.REMOVE_ADS); }));
         gap(main, 14);
         main.addView(action("Restore Google Play purchases", PANEL, WHITE, billing::restore));

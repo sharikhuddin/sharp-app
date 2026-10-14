@@ -1,3 +1,9 @@
+# DareDash v1.2 — party game with verified monetization setup
+
+**Monetization not live yet**: See [step-by-step account setup](play-store/MONETIZATION_SETUP.md). Google AdMob and Play billing IDs, approvals and developer-owned receipt verification backend are required; nothing in this repository can activate a Google payout account. Live purchase entitlements are withheld until server verification. Debug always uses Google sample ads.
+
+**Invite friends**: Add players individually or in bulk, and use the Android sharing sheet to invite via WhatsApp/SMS/etc. Opening `daredash://invite?players=...` imports the local roster. This is **pass-and-play on one phone**, not a network multiplayer room.
+
 # 🎉 DareDash – Native Android party game
 
 Free-to-build, offline-first Java/Android Studio app. Created October 2026.

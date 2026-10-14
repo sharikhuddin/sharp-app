@@ -1,15 +1,25 @@
 plugins { id 'com.android.application' }
 
+// IDs and verification endpoint are public configuration, NOT credentials.
+// Supply production values through GitHub Actions secrets/environment variables.
+def config = { key -> (project.findProperty(key) ?: System.getenv(key) ?: '').toString().trim() }
+def googleTestAppId = 'ca-app-pub-3940256099942544~3347511713'
+def googleTestBanner = 'ca-app-pub-3940256099942544/6300978111'
+def googleTestRewarded = 'ca-app-pub-3940256099942544/5224354917'
+def asJavaString = { s -> '"' + s.replace('\\', '\\\\').replace('"', '\\"') + '"' }
+
 android {
     namespace 'com.daredash.party'
     compileSdk 36
+
+    buildFeatures { buildConfig true }
 
     defaultConfig {
         applicationId 'com.daredash.party'
         minSdk 24
         targetSdk 36
-        versionCode 1
-        versionName '1.0.0'
+        versionCode 3
+        versionName '1.2.0'
     }
 
     signingConfigs {
@@ -23,13 +33,20 @@ android {
         }
     }
     buildTypes {
+        debug {
+            manifestPlaceholders = [ADMOB_APP_ID: googleTestAppId]
+            buildConfigField 'String', 'BANNER_AD_UNIT_ID', asJavaString(googleTestBanner)
+            buildConfigField 'String', 'REWARDED_AD_UNIT_ID', asJavaString(googleTestRewarded)
+            // Debug builds NEVER request live ads or grant unverified IAPs.
+            buildConfigField 'String', 'PURCHASE_VERIFY_URL', '""'
+        }
         release {
             minifyEnabled false
-            // Sign the release AAB with your own permanent Play upload key.
-            // Never commit that key or its passwords to GitHub.
-            if (project.hasProperty('DDA_KEYSTORE_FILE')) {
-                signingConfig signingConfigs.upload
-            }
+            manifestPlaceholders = [ADMOB_APP_ID: config('DDA_ADMOB_APP_ID') ?: googleTestAppId]
+            buildConfigField 'String', 'BANNER_AD_UNIT_ID', asJavaString(config('DDA_ADMOB_BANNER_UNIT_ID'))
+            buildConfigField 'String', 'REWARDED_AD_UNIT_ID', asJavaString(config('DDA_ADMOB_REWARDED_UNIT_ID'))
+            buildConfigField 'String', 'PURCHASE_VERIFY_URL', asJavaString(config('DDA_PURCHASE_VERIFY_URL'))
+            if (project.hasProperty('DDA_KEYSTORE_FILE')) signingConfig signingConfigs.upload
         }
     }
     compileOptions {
@@ -38,7 +55,25 @@ android {
     }
 }
 
+// Fail closed: prevent any release AAB/APK with demo IDs or missing verifier.
+gradle.taskGraph.whenReady { graph ->
+    if (graph.allTasks.any { it.name in ['bundleRelease', 'assembleRelease'] }) {
+            if (!(config('DDA_ADMOB_APP_ID') ==~ /ca-app-pub-\d{16}~\d{10}/))
+                throw new GradleException('Add real DDA_ADMOB_APP_ID before release.')
+            if (!(config('DDA_ADMOB_BANNER_UNIT_ID') ==~ /ca-app-pub-\d{16}\/\d{10}/) ||
+                !(config('DDA_ADMOB_REWARDED_UNIT_ID') ==~ /ca-app-pub-\d{16}\/\d{10}/))
+                throw new GradleException('Add both real AdMob unit IDs before release.')
+            if (config('DDA_ADMOB_APP_ID').contains('3940256099942544') ||
+                config('DDA_ADMOB_BANNER_UNIT_ID').contains('3940256099942544') ||
+                config('DDA_ADMOB_REWARDED_UNIT_ID').contains('3940256099942544'))
+                throw new GradleException('Google sample AdMob IDs cannot be used in a release.')
+            if (!config('DDA_PURCHASE_VERIFY_URL').startsWith('https://'))
+                throw new GradleException('Configure HTTPS DDA_PURCHASE_VERIFY_URL for receipt validation.')
+    }
+}
+
 dependencies {
     implementation 'com.google.android.gms:play-services-ads:25.5.0'
+    implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
     implementation 'com.android.billingclient:billing:8.3.0'
 }

@@ -11,47 +11,101 @@ import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.UserMessagingPlatform;
 
-/** Google-provided DEMO inventory only. Replace both unit IDs after consent setup. */
+/** Respect Google UMP consent before making any ad request. */
 final class AdsManager {
-    static final String BANNER_TEST = "ca-app-pub-3940256099942544/6300978111";
-    static final String REWARD_TEST = "ca-app-pub-3940256099942544/5224354917";
-    private RewardedAd rewarded;
-    private boolean loading;
     private final Activity activity;
+    private final ConsentInformation consent;
+    private RewardedAd rewarded;
+    private boolean initialized;
+    private boolean loading;
+    private boolean adsReady;
 
     AdsManager(Activity activity) {
         this.activity = activity;
-        new Thread(() -> MobileAds.initialize(activity, status -> {})).start();
-        loadReward();
+        consent = UserMessagingPlatform.getConsentInformation(activity);
+    }
+
+    void start(Runnable onAvailabilityChanged) {
+        ConsentRequestParameters params = new ConsentRequestParameters.Builder().build();
+        // This request happens on every launch; never infer consent from cached strings.
+        consent.requestConsentInfoUpdate(activity, params, () -> {
+            UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity, error -> {
+                maybeEnableAds();
+                onAvailabilityChanged.run();
+            });
+            // UMP can already have valid consent from a previous launch.
+            maybeEnableAds();
+            onAvailabilityChanged.run();
+        }, error -> {
+            // Only serve ads if UMP says ads can be requested on this launch.
+            maybeEnableAds();
+            onAvailabilityChanged.run();
+        });
+    }
+
+    boolean canShowAds() { return adsReady && consent.canRequestAds(); }
+
+    boolean privacyOptionsRequired() {
+        return consent.getPrivacyOptionsRequirementStatus() ==
+            ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED;
+    }
+
+    void showPrivacyOptions(Runnable onChanged) {
+        if (!privacyOptionsRequired()) {
+            Toast.makeText(activity, "Privacy options are not required for your region or configuration.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        UserMessagingPlatform.showPrivacyOptionsForm(activity, error -> {
+            if (!consent.canRequestAds()) {
+                rewarded = null;
+                adsReady = false;
+            } else maybeEnableAds();
+            onChanged.run();
+        });
+    }
+
+    private void maybeEnableAds() {
+        if (!consent.canRequestAds()) return;
+        adsReady = true;
+        if (!initialized) {
+            initialized = true;
+            new Thread(() -> MobileAds.initialize(activity, status ->
+                activity.runOnUiThread(this::loadReward))).start();
+        } else loadReward();
     }
 
     AdView makeBanner() {
+        if (!canShowAds()) return null;
         AdView view = new AdView(activity);
-        view.setAdUnitId(BANNER_TEST);
+        view.setAdUnitId(BuildConfig.BANNER_AD_UNIT_ID);
         view.setAdSize(AdSize.BANNER);
         view.loadAd(new AdRequest.Builder().build());
         return view;
     }
 
     private void loadReward() {
-        if (loading || rewarded != null) return;
+        if (!canShowAds() || loading || rewarded != null) return;
         loading = true;
-        RewardedAd.load(activity, REWARD_TEST, new AdRequest.Builder().build(), new RewardedAdLoadCallback() {
-            @Override public void onAdLoaded(RewardedAd ad) {
-                loading = false;
-                rewarded = ad;
-            }
-            @Override public void onAdFailedToLoad(LoadAdError error) {
-                loading = false;
-                rewarded = null;
-            }
-        });
+        RewardedAd.load(activity, BuildConfig.REWARDED_AD_UNIT_ID,
+            new AdRequest.Builder().build(), new RewardedAdLoadCallback() {
+                @Override public void onAdLoaded(RewardedAd ad) {
+                    loading = false;
+                    rewarded = ad;
+                }
+                @Override public void onAdFailedToLoad(LoadAdError error) {
+                    loading = false;
+                    rewarded = null;
+                }
+            });
     }
 
     void showReward(Runnable onEarned) {
-        if (rewarded == null) {
-            Toast.makeText(activity, "Test video unavailable right now. Try again later.", Toast.LENGTH_LONG).show();
+        if (!canShowAds() || rewarded == null) {
+            Toast.makeText(activity, "Video unavailable. You can continue playing for free.", Toast.LENGTH_LONG).show();
             loadReward();
             return;
         }

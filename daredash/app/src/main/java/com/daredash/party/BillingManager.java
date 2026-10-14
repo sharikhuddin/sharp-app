@@ -2,28 +2,22 @@ package com.daredash.party;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import com.android.billingclient.api.AcknowledgePurchaseParams;
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClientStateListener;
-import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.BillingResult;
-import com.android.billingclient.api.PendingPurchasesParams;
-import com.android.billingclient.api.ProductDetails;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.QueryPurchasesParams;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.android.billingclient.api.*;
+import org.json.JSONObject;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.OutputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-/** Real Google Play one-time product integration; products need Play Console setup first.
- * Production hardening: verify tokens on a trusted backend before granting entitlements.
- */
+/** Never grant a new purchase without Google Play server verification. */
 final class BillingManager {
     static final String ALL_PACKS = "all_packs";
     static final String REMOVE_ADS = "remove_ads";
+    private static final long CACHE_MILLIS = 24L * 60L * 60L * 1000L;
 
     interface Listener {
         void entitlementsChanged(boolean allPacks, boolean removeAds);
@@ -33,73 +27,83 @@ final class BillingManager {
     private final Activity activity;
     private final Listener listener;
     private final BillingClient client;
+    // Versioned store prevents insecure entitlement data from older builds carrying forward.
     private final SharedPreferences prefs;
     private final Map<String, ProductDetails> products = new HashMap<>();
+    private final ExecutorService io = Executors.newSingleThreadExecutor();
     private boolean connected;
 
     BillingManager(Activity activity, Listener listener) {
         this.activity = activity;
         this.listener = listener;
-        prefs = activity.getSharedPreferences("purchases", Activity.MODE_PRIVATE);
+        prefs = activity.getSharedPreferences("verified_purchases_v2", Activity.MODE_PRIVATE);
         client = BillingClient.newBuilder(activity)
-            .setListener((billingResult, purchases) -> {
-                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
-                    for (Purchase purchase : purchases) processPurchase(purchase);
-                } else if (billingResult.getResponseCode() != BillingClient.BillingResponseCode.USER_CANCELED) {
-                    notifyMessage("Purchase unavailable: " + billingResult.getDebugMessage());
-                }
+            .setListener((result, purchases) -> {
+                if (result.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
+                    for (Purchase p : purchases) processPurchase(p, true);
+                } else if (result.getResponseCode() != BillingClient.BillingResponseCode.USER_CANCELED)
+                    notifyMessage("Google Play: " + result.getDebugMessage());
             })
             .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
-            .enableAutoServiceReconnection()
-            .build();
+            .enableAutoServiceReconnection().build();
         connect();
     }
 
-    boolean ownsPacks() { return prefs.getBoolean(ALL_PACKS, false); }
-    boolean ownsNoAds() { return prefs.getBoolean(REMOVE_ADS, false); }
+    private boolean owned(String product) {
+        long stamp = prefs.getLong(product + "_at", 0L);
+        return prefs.getBoolean(product, false) && stamp > 0 &&
+            System.currentTimeMillis() - stamp < CACHE_MILLIS;
+    }
+    boolean ownsPacks() { return owned(ALL_PACKS); }
+    boolean ownsNoAds() { return owned(REMOVE_ADS); }
 
-    private void notifyMessage(String message) { activity.runOnUiThread(() -> listener.message(message)); }
+    String displayPrice(String id) {
+        ProductDetails details = products.get(id);
+        if (details == null || details.getOneTimePurchaseOfferDetails() == null) return "Google Play";
+        return details.getOneTimePurchaseOfferDetails().getFormattedPrice();
+    }
+
+    private void notifyMessage(String s) { activity.runOnUiThread(() -> listener.message(s)); }
+    private void publish() { activity.runOnUiThread(() -> listener.entitlementsChanged(ownsPacks(), ownsNoAds())); }
 
     private void connect() {
         client.startConnection(new BillingClientStateListener() {
-            @Override public void onBillingSetupFinished(BillingResult result) {
-                if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+            @Override public void onBillingSetupFinished(BillingResult r) {
+                if (r.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                     connected = true;
                     loadProducts();
                     restore();
-                }
+                } else notifyMessage("Play Billing is not available yet.");
             }
             @Override public void onBillingServiceDisconnected() { connected = false; }
         });
     }
 
     private void loadProducts() {
-        List<QueryProductDetailsParams.Product> list = new ArrayList<>();
-        for (String id : Arrays.asList(ALL_PACKS, REMOVE_ADS)) {
-            list.add(QueryProductDetailsParams.Product.newBuilder()
+        List<QueryProductDetailsParams.Product> queries = new ArrayList<>();
+        for (String id : Arrays.asList(ALL_PACKS, REMOVE_ADS))
+            queries.add(QueryProductDetailsParams.Product.newBuilder()
                 .setProductId(id).setProductType(BillingClient.ProductType.INAPP).build());
-        }
-        client.queryProductDetailsAsync(QueryProductDetailsParams.newBuilder().setProductList(list).build(),
+        client.queryProductDetailsAsync(QueryProductDetailsParams.newBuilder().setProductList(queries).build(),
             (result, response) -> {
-                if (result.getResponseCode() != BillingClient.BillingResponseCode.OK) return;
-                for (ProductDetails detail : response.getProductDetailsList()) products.put(detail.getProductId(), detail);
+                if (result.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                    for (ProductDetails details : response.getProductDetailsList())
+                        products.put(details.getProductId(), details);
+                }
             });
     }
 
-    void buy(String productId) {
-        if (!connected) { notifyMessage("Google Play is not ready. Try again after connecting to the Play Store."); return; }
-        ProductDetails detail = products.get(productId);
-        if (detail == null) {
-            notifyMessage("Create and activate product '" + productId + "' in Play Console first.");
-            return;
-        }
-        List<BillingFlowParams.ProductDetailsParams> requested = new ArrayList<>();
-        requested.add(BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(detail).build());
-        BillingResult response = client.launchBillingFlow(activity,
-            BillingFlowParams.newBuilder().setProductDetailsParamsList(requested).build());
-        if (response.getResponseCode() != BillingClient.BillingResponseCode.OK) {
-            notifyMessage("Could not open Google Play checkout: " + response.getDebugMessage());
-        }
+    void buy(String id) {
+        if (!connected) { notifyMessage("Connect to Google Play to purchase."); return; }
+        ProductDetails product = products.get(id);
+        if (product == null) { notifyMessage("This item is not active in Play Console yet."); return; }
+        BillingFlowParams.ProductDetailsParams requested =
+            BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(product).build();
+        BillingResult r = client.launchBillingFlow(activity,
+            BillingFlowParams.newBuilder().setProductDetailsParamsList(
+                Collections.singletonList(requested)).build());
+        if (r.getResponseCode() != BillingClient.BillingResponseCode.OK)
+            notifyMessage("Google Play checkout was unavailable: " + r.getDebugMessage());
     }
 
     void restore() {
@@ -107,40 +111,84 @@ final class BillingManager {
         client.queryPurchasesAsync(QueryPurchasesParams.newBuilder()
             .setProductType(BillingClient.ProductType.INAPP).build(), (result, purchases) -> {
                 if (result.getResponseCode() != BillingClient.BillingResponseCode.OK) return;
-                boolean packs = false, noAds = false;
+                Set<String> current = new HashSet<>();
                 for (Purchase p : purchases) {
                     if (p.getPurchaseState() != Purchase.PurchaseState.PURCHASED) continue;
-                    if (p.getProducts().contains(ALL_PACKS)) packs = true;
-                    if (p.getProducts().contains(REMOVE_ADS)) noAds = true;
-                    if (!p.isAcknowledged()) acknowledge(p);
+                    current.addAll(p.getProducts());
+                    processPurchase(p, false);
                 }
-                // Entitlements cached locally for offline use; Play refreshes on reconnect.
-                prefs.edit().putBoolean(ALL_PACKS, packs).putBoolean(REMOVE_ADS, noAds).apply();
+                // Remove entitlements no longer present on the current Google Play account
+                // (refunds, revoked transactions, account changes).
+                SharedPreferences.Editor e = prefs.edit();
+                for (String id : Arrays.asList(ALL_PACKS, REMOVE_ADS)) {
+                    if (!current.contains(id)) e.remove(id).remove(id + "_at");
+                }
+                e.apply();
                 publish();
             });
     }
 
-    private void acknowledge(Purchase purchase) {
+    private void processPurchase(Purchase purchase, boolean notify) {
+        if (purchase.getPurchaseState() != Purchase.PurchaseState.PURCHASED) {
+            if (notify) notifyMessage("Payment pending. Content unlocks when payment completes.");
+            return;
+        }
+        String url = BuildConfig.PURCHASE_VERIFY_URL;
+        if (url == null || !url.startsWith("https://")) {
+            if (notify) notifyMessage("Purchases are not yet activated by the developer.");
+            return;  // Never trust client-side token alone.
+        }
+        for (String id : purchase.getProducts()) {
+            if (!ALL_PACKS.equals(id) && !REMOVE_ADS.equals(id)) continue;
+            io.execute(() -> {
+                boolean verified = verify(url, id, purchase.getPurchaseToken());
+                if (!verified) {
+                    if (notify) notifyMessage("Payment could not be verified. Try Restore Purchases later.");
+                    return;
+                }
+                prefs.edit().putBoolean(id, true)
+                    .putLong(id + "_at", System.currentTimeMillis()).apply();
+                publish();
+                if (!purchase.isAcknowledged()) acknowledge(purchase);
+                if (notify) notifyMessage("Purchase verified and unlocked!");
+            });
+        }
+    }
+
+    private boolean verify(String url, String productId, String purchaseToken) {
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("POST");
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(15000);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            JSONObject body = new JSONObject();
+            body.put("productId", productId);
+            body.put("purchaseToken", purchaseToken);
+            try (OutputStream out = connection.getOutputStream()) {
+                out.write(body.toString().getBytes(StandardCharsets.UTF_8));
+            }
+            if (connection.getResponseCode() != 200) return false;
+            try (InputStream in = connection.getInputStream()) {
+                byte[] data = new byte[2048];
+                int read = in.read(data);
+                if (read < 1) return false;
+                JSONObject result = new JSONObject(new String(data, 0, read, StandardCharsets.UTF_8));
+                return result.optBoolean("verified", false) && productId.equals(result.optString("productId"));
+            }
+        } catch (Exception ignored) { return false; }
+        finally { if (connection != null) connection.disconnect(); }
+    }
+
+    private void acknowledge(Purchase p) {
         client.acknowledgePurchase(AcknowledgePurchaseParams.newBuilder()
-            .setPurchaseToken(purchase.getPurchaseToken()).build(), result -> {
-                if (result.getResponseCode() != BillingClient.BillingResponseCode.OK)
-                    notifyMessage("Purchase acknowledgement pending. Open the app again to retry.");
+            .setPurchaseToken(p.getPurchaseToken()).build(), r -> {
+                if (r.getResponseCode() != BillingClient.BillingResponseCode.OK)
+                    notifyMessage("Verification passed, but acknowledgement is pending. Reopen the app to retry.");
             });
     }
 
-    private void processPurchase(Purchase purchase) {
-        if (purchase.getPurchaseState() != Purchase.PurchaseState.PURCHASED) {
-            notifyMessage("Your purchase is pending. It unlocks after payment completes.");
-            return;
-        }
-        SharedPreferences.Editor e = prefs.edit();
-        if (purchase.getProducts().contains(ALL_PACKS)) e.putBoolean(ALL_PACKS, true);
-        if (purchase.getProducts().contains(REMOVE_ADS)) e.putBoolean(REMOVE_ADS, true);
-        e.apply();
-        if (!purchase.isAcknowledged()) acknowledge(purchase);
-        publish();
-    }
-
-    private void publish() { activity.runOnUiThread(() -> listener.entitlementsChanged(ownsPacks(), ownsNoAds())); }
-    void close() { client.endConnection(); }
+    void close() { io.shutdownNow(); client.endConnection(); }
 }

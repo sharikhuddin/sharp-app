@@ -1,0 +1,8 @@
+name = "daredash-play-verifier"
+main = "index.js"
+compatibility_date = "2026-10-14"
+
+[vars]
+PLAY_PACKAGE_NAME = "com.daredash.party"
+# Set GOOGLE_SERVICE_ACCOUNT_JSON as a secret using wrangler secret put.
+# Do not put service-account credentials in this file.

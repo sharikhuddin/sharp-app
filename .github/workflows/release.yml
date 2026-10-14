@@ -33,6 +33,10 @@ jobs:
           STORE_PASSWORD: ${{ secrets.UPLOAD_STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+          DDA_ADMOB_APP_ID: ${{ vars.DDA_ADMOB_APP_ID }}
+          DDA_ADMOB_BANNER_UNIT_ID: ${{ vars.DDA_ADMOB_BANNER_UNIT_ID }}
+          DDA_ADMOB_REWARDED_UNIT_ID: ${{ vars.DDA_ADMOB_REWARDED_UNIT_ID }}
+          DDA_PURCHASE_VERIFY_URL: ${{ vars.DDA_PURCHASE_VERIFY_URL }}
         run: >-
           gradle :app:bundleRelease
           -PDDA_KEYSTORE_FILE="$RUNNER_TEMP/upload.jks"
