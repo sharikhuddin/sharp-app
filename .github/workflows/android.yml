@@ -21,7 +21,11 @@ jobs:
         with:
           gradle-version: '8.13'
       - name: Install Android 36 SDK
-        run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+        run: |
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+          test -x "$SDKMANAGER" || (echo "Android SDK tools missing" && exit 1)
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" 'platforms;android-36' 'build-tools;35.0.0'
       - name: Compile and package debug APK
         run: gradle :app:assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
