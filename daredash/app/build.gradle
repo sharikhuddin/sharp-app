@@ -1,0 +1,44 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.daredash.party'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.daredash.party'
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        if (project.hasProperty('DDA_KEYSTORE_FILE')) {
+            create('upload') {
+                storeFile file(project.property('DDA_KEYSTORE_FILE'))
+                storePassword project.property('DDA_STORE_PASSWORD')
+                keyAlias project.property('DDA_KEY_ALIAS')
+                keyPassword project.property('DDA_KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            // Sign the release AAB with your own permanent Play upload key.
+            // Never commit that key or its passwords to GitHub.
+            if (project.hasProperty('DDA_KEYSTORE_FILE')) {
+                signingConfig signingConfigs.upload
+            }
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.android.gms:play-services-ads:25.5.0'
+    implementation 'com.android.billingclient:billing:8.3.0'
+}

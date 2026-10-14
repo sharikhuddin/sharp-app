@@ -1,5 +1,3 @@
-# DareDash Party Game
+DareDash Android source lives in [daredash/](daredash/).
 
-Native Android source is in [`daredash/`](daredash/).
-
-Use the Actions tab to build a debug APK from your phone.
+Debug APK via [Actions](../../actions).
