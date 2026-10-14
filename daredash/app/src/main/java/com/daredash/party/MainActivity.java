@@ -355,11 +355,12 @@ public final class MainActivity extends Activity implements BillingManager.Liste
             main.addView(r);
         }
         gap(main, 16);
+        final int winningScore = best;
         main.addView(action("Share the winner 🏆", PURPLE, WHITE, () -> {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT, "We played DareDash! 🏆 Winner: " + android.text.TextUtils.join(", ", winners)
-                + " with " + best + " points. Challenge your friends next!");
+                + " with " + winningScore + " points. Challenge your friends next!");
             startActivity(Intent.createChooser(intent, "Share your score"));
         }));
         gap(main, 10);
