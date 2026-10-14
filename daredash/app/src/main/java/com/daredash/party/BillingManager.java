@@ -59,8 +59,15 @@ final class BillingManager {
 
     String displayPrice(String id) {
         ProductDetails details = products.get(id);
-        if (details == null || details.getOneTimePurchaseOfferDetails() == null) return "Google Play";
-        return details.getOneTimePurchaseOfferDetails().getFormattedPrice();
+        ProductDetails.OneTimePurchaseOfferDetails offer = pickOffer(details);
+        return offer == null ? "Google Play" : offer.getFormattedPrice();
+    }
+
+    private ProductDetails.OneTimePurchaseOfferDetails pickOffer(ProductDetails details) {
+        if (details == null) return null;
+        List<ProductDetails.OneTimePurchaseOfferDetails> offers = details.getOneTimePurchaseOfferDetailsList();
+        if (offers != null && !offers.isEmpty()) return offers.get(0);
+        return details.getOneTimePurchaseOfferDetails();
     }
 
     private void notifyMessage(String s) { activity.runOnUiThread(() -> listener.message(s)); }
@@ -97,8 +104,12 @@ final class BillingManager {
         if (!connected) { notifyMessage("Connect to Google Play to purchase."); return; }
         ProductDetails product = products.get(id);
         if (product == null) { notifyMessage("This item is not active in Play Console yet."); return; }
-        BillingFlowParams.ProductDetailsParams requested =
-            BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(product).build();
+        BillingFlowParams.ProductDetailsParams.Builder purchaseBuilder =
+            BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(product);
+        ProductDetails.OneTimePurchaseOfferDetails offer = pickOffer(product);
+        if (offer != null && offer.getOfferToken() != null && !offer.getOfferToken().isEmpty())
+            purchaseBuilder.setOfferToken(offer.getOfferToken());
+        BillingFlowParams.ProductDetailsParams requested = purchaseBuilder.build();
         BillingResult r = client.launchBillingFlow(activity,
             BillingFlowParams.newBuilder().setProductDetailsParamsList(
                 Collections.singletonList(requested)).build());
