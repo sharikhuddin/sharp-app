@@ -1,3 +1,9 @@
+# DareDash v1.3 — AdMob production App + Banner IDs added (2026-10-15)
+
+**Ads-first build:** Release uses the user-provided production AdMob App ID and Banner unit ID. The supplied Rewarded ID was identical to Banner, so Rewarded ads are disabled in release until a valid *different* Rewarded unit is provided. Debug stays on Google test ads. **Production approval and AdMob payouts are not active merely because IDs are compiled.**
+
+**Safe IAP rollout:** Play Billing purchase UI is disabled in release until you set `DDA_ENABLE_PURCHASES=true` and a real `DDA_PURCHASE_VERIFY_URL` pointing to a deployed, verified backend. Free play remains available. See [AdMob release checklist](play-store/ADMOB_RELEASE_STATUS.md) and [monetization setup](play-store/MONETIZATION_SETUP.md).
+
 # DareDash v1.2 — party game with verified monetization setup
 
 **Monetization not live yet**: See [step-by-step account setup](play-store/MONETIZATION_SETUP.md). Google AdMob and Play billing IDs, approvals and developer-owned receipt verification backend are required; nothing in this repository can activate a Google payout account. Live purchase entitlements are withheld until server verification. Debug always uses Google sample ads.

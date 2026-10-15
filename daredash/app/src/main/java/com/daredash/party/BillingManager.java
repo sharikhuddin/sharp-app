@@ -101,6 +101,7 @@ final class BillingManager {
     }
 
     void buy(String id) {
+        if (!BuildConfig.BILLING_ENABLED) { notifyMessage("Premium purchases are not available yet."); return; }
         if (!connected) { notifyMessage("Connect to Google Play to purchase."); return; }
         ProductDetails product = products.get(id);
         if (product == null) { notifyMessage("This item is not active in Play Console yet."); return; }

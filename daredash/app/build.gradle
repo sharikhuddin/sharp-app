@@ -6,6 +6,13 @@ def config = { key -> (project.findProperty(key) ?: System.getenv(key) ?: '').to
 def googleTestAppId = 'ca-app-pub-3940256099942544~3347511713'
 def googleTestBanner = 'ca-app-pub-3940256099942544/6300978111'
 def googleTestRewarded = 'ca-app-pub-3940256099942544/5224354917'
+// Public IDs from the DareDash AdMob account. Optional CI vars can override these.
+// Rewarded ID intentionally blank: the user supplied the same unit for Banner and Rewarded.
+def prodAppId = config('DDA_ADMOB_APP_ID') ?: 'ca-app-pub-5654555743041629~9552640046'
+def prodBannerId = config('DDA_ADMOB_BANNER_UNIT_ID') ?: 'ca-app-pub-5654555743041629/2510834956'
+def prodRewardedId = config('DDA_ADMOB_REWARDED_UNIT_ID')
+def verifyUrl = config('DDA_PURCHASE_VERIFY_URL')
+def billingEnabled = config('DDA_ENABLE_PURCHASES').equalsIgnoreCase('true') && verifyUrl.startsWith('https://')
 def asJavaString = { s -> '"' + s.replace('\\', '\\\\').replace('"', '\\"') + '"' }
 
 android {
@@ -18,8 +25,8 @@ android {
         applicationId 'com.daredash.party'
         minSdk 24
         targetSdk 36
-        versionCode 3
-        versionName '1.2.0'
+        versionCode 4
+        versionName '1.3.0'
     }
 
     signingConfigs {
@@ -39,13 +46,15 @@ android {
             buildConfigField 'String', 'REWARDED_AD_UNIT_ID', asJavaString(googleTestRewarded)
             // Debug builds NEVER request live ads or grant unverified IAPs.
             buildConfigField 'String', 'PURCHASE_VERIFY_URL', '""'
+            buildConfigField 'boolean', 'BILLING_ENABLED', 'false'
         }
         release {
             minifyEnabled false
-            manifestPlaceholders = [ADMOB_APP_ID: config('DDA_ADMOB_APP_ID') ?: googleTestAppId]
-            buildConfigField 'String', 'BANNER_AD_UNIT_ID', asJavaString(config('DDA_ADMOB_BANNER_UNIT_ID'))
-            buildConfigField 'String', 'REWARDED_AD_UNIT_ID', asJavaString(config('DDA_ADMOB_REWARDED_UNIT_ID'))
-            buildConfigField 'String', 'PURCHASE_VERIFY_URL', asJavaString(config('DDA_PURCHASE_VERIFY_URL'))
+            manifestPlaceholders = [ADMOB_APP_ID: prodAppId]
+            buildConfigField 'String', 'BANNER_AD_UNIT_ID', asJavaString(prodBannerId)
+            buildConfigField 'String', 'REWARDED_AD_UNIT_ID', asJavaString(prodRewardedId)
+            buildConfigField 'String', 'PURCHASE_VERIFY_URL', asJavaString(verifyUrl)
+            buildConfigField 'boolean', 'BILLING_ENABLED', billingEnabled.toString()
             if (project.hasProperty('DDA_KEYSTORE_FILE')) signingConfig signingConfigs.upload
         }
     }
@@ -55,20 +64,24 @@ android {
     }
 }
 
-// Fail closed: prevent any release AAB/APK with demo IDs or missing verifier.
+// Release must use real, distinct ad unit IDs. An absent rewarded unit is safe
+// (only banner ads run). Paid upgrades stay disabled until a verifier exists.
 gradle.taskGraph.whenReady { graph ->
     if (graph.allTasks.any { it.name in ['bundleRelease', 'assembleRelease'] }) {
-            if (!(config('DDA_ADMOB_APP_ID') ==~ /ca-app-pub-\d{16}~\d{10}/))
-                throw new GradleException('Add real DDA_ADMOB_APP_ID before release.')
-            if (!(config('DDA_ADMOB_BANNER_UNIT_ID') ==~ /ca-app-pub-\d{16}\/\d{10}/) ||
-                !(config('DDA_ADMOB_REWARDED_UNIT_ID') ==~ /ca-app-pub-\d{16}\/\d{10}/))
-                throw new GradleException('Add both real AdMob unit IDs before release.')
-            if (config('DDA_ADMOB_APP_ID').contains('3940256099942544') ||
-                config('DDA_ADMOB_BANNER_UNIT_ID').contains('3940256099942544') ||
-                config('DDA_ADMOB_REWARDED_UNIT_ID').contains('3940256099942544'))
-                throw new GradleException('Google sample AdMob IDs cannot be used in a release.')
-            if (!config('DDA_PURCHASE_VERIFY_URL').startsWith('https://'))
-                throw new GradleException('Configure HTTPS DDA_PURCHASE_VERIFY_URL for receipt validation.')
+        if (!(prodAppId ==~ /ca-app-pub-\d{16}~\d{10}/) ||
+            prodAppId.contains('3940256099942544'))
+            throw new GradleException('DareDash needs its real AdMob App ID for release.')
+        if (!(prodBannerId ==~ /ca-app-pub-\d{16}\/\d{10}/) ||
+            prodBannerId.contains('3940256099942544'))
+            throw new GradleException('DareDash needs its real Banner ad unit for release.')
+        if (prodRewardedId) {
+            if (!(prodRewardedId ==~ /ca-app-pub-\d{16}\/\d{10}/) ||
+                prodRewardedId == prodBannerId ||
+                prodRewardedId.contains('3940256099942544'))
+                throw new GradleException('Rewarded ad unit must be a separate valid production Rewarded ID.')
+        }
+        if (config('DDA_ENABLE_PURCHASES').equalsIgnoreCase('true') && !billingEnabled)
+            throw new GradleException('Purchases cannot be enabled without HTTPS purchase verification.')
     }
 }
 

@@ -1,3 +1,11 @@
+# DareDash account-specific AdMob values (2026-10-15)
+
+- **Production App ID:** `ca-app-pub-5654555743041629~9552640046`
+- **Production Banner:** `ca-app-pub-5654555743041629/2510834956` (as labeled by owner; AdMob format not independently verified)
+- **Production Rewarded:** **MISSING.** The owner supplied the same ID for Banner and Rewarded. Do not reuse it; create a separate Rewarded format unit in AdMob. Production app hides rewarded videos until configured.
+- **Purchases:** disabled in release until an HTTPS purchase verifier is deployed and `DDA_ENABLE_PURCHASES=true`. Do not charge users without working receipt verification.
+- **To publish:** set secure signing secrets in GitHub, generate a signed AAB, complete Google Play declarations and testing, publish, link app in AdMob, host and verify app-ads.txt and pass app readiness review. All these remaining steps require actual account actions.
+
 # DareDash monetization & Google Play launch guide (October 2026)
 
 ## State of this repository

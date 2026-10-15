@@ -371,10 +371,10 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         gap(main, 9);
         main.addView(action("🎲  Re-roll this card (" + skips + " left)", PANEL, WHITE, () -> {
             if (skips > 0) { skips--; nextChallenge(); }
-            else toast("No re-rolls left. Watch an optional video for 3 more.");
+            else toast(ads.rewardedConfigured() ? "No re-rolls left. Watch an optional video for 3 more." : "No re-rolls left. Bonus videos are coming soon.");
         }));
         gap(main, 9);
-        main.addView(action(noAds ? "🎁  Claim +3 free re-rolls" : "▶  Watch a video for +3 re-rolls", PANEL, WHITE, () -> {
+        if (noAds || ads.rewardedConfigured()) main.addView(action(noAds ? "🎁  Claim +3 free re-rolls" : "▶  Watch a video for +3 re-rolls", PANEL, WHITE, () -> {
             if (noAds) { skips += 3; toast("+3 re-rolls added! Thanks for upgrading."); showGame(); }
             else ads.showReward(() -> runOnUiThread(() -> {
                 skips += 3;
@@ -456,6 +456,13 @@ public final class MainActivity extends Activity implements BillingManager.Liste
     private void showShop() {
         inGame = false;
         showPage("Keep the laughs going with optional upgrades.");
+        if (!BuildConfig.BILLING_ENABLED) {
+            tile("Premium packs coming soon", "The free game remains fully playable. Real-money purchases are disabled until Google Play product setup and server verification are completed.", "🎁");
+            gap(main, 18);
+            main.addView(action("← Back to game setup", PANEL, WHITE, this::showHome));
+            addBanner();
+            return;
+        }
         tile("✨ All premium challenge packs", "Unlock Chaos Mode and Duos: 24 more original challenges. One-time purchase, not a subscription.", "🎁");
         gap(main, 11);
         main.addView(action(premium ? "✓ Premium packs unlocked" : "Unlock packs · " + billing.displayPrice(BillingManager.ALL_PACKS), PURPLE, WHITE,

@@ -87,8 +87,12 @@ final class AdsManager {
         return view;
     }
 
+    boolean rewardedConfigured() {
+        return BuildConfig.REWARDED_AD_UNIT_ID != null && !BuildConfig.REWARDED_AD_UNIT_ID.trim().isEmpty();
+    }
+
     private void loadReward() {
-        if (!canShowAds() || loading || rewarded != null) return;
+        if (!rewardedConfigured() || !canShowAds() || loading || rewarded != null) return;
         loading = true;
         RewardedAd.load(activity, BuildConfig.REWARDED_AD_UNIT_ID,
             new AdRequest.Builder().build(), new RewardedAdLoadCallback() {
@@ -104,6 +108,10 @@ final class AdsManager {
     }
 
     void showReward(Runnable onEarned) {
+        if (!rewardedConfigured()) {
+            Toast.makeText(activity, "Bonus video ads are coming soon.", Toast.LENGTH_LONG).show();
+            return;
+        }
         if (!canShowAds() || rewarded == null) {
             Toast.makeText(activity, "Video unavailable. You can continue playing for free.", Toast.LENGTH_LONG).show();
             loadReward();
