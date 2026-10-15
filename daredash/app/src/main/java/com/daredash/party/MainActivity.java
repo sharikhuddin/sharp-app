@@ -1,6 +1,9 @@
 package com.daredash.party;
 
 import android.app.Activity;
+import android.annotation.SuppressLint;
+import android.os.Build;
+import android.window.OnBackInvokedDispatcher;
 import android.content.Intent;
 import android.net.Uri;
 import android.content.ClipData;
@@ -66,6 +69,11 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         super.onCreate(state);
         getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(BG);
+        // API 33+ (including Android 16) delivers system back gestures here.
+        if (Build.VERSION.SDK_INT >= 33) {
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                OnBackInvokedDispatcher.PRIORITY_DEFAULT, this::handleSystemBack);
+        }
         localPlayers = getSharedPreferences(STORE_NAME, MODE_PRIVATE);
         restorePlayerNames();
         ads = new AdsManager(this);
@@ -557,7 +565,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
 
     @Override public void message(String text) { toast(text); }
 
-    @Override public void onBackPressed() {
+    private void handleSystemBack() {
         if (inGame) {
             new android.app.AlertDialog.Builder(this)
                 .setTitle("Leave this game?")
@@ -565,8 +573,14 @@ public final class MainActivity extends Activity implements BillingManager.Liste
                 .setNegativeButton("Keep playing", null)
                 .setPositiveButton("Leave", (dialog, which) -> showHome())
                 .show();
-        } else super.onBackPressed();
+        } else {
+            finish();
+        }
     }
+
+    // Pre-Android 13 hardware back compatibility; gestures use OnBackInvokedDispatcher.
+    @SuppressLint("GestureBackNavigation")
+    @Override public void onBackPressed() { handleSystemBack(); }
 
     @Override protected void onDestroy() {
         if (countdown != null) countdown.cancel();
