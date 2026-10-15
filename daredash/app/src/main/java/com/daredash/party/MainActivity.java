@@ -172,7 +172,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
                 Intent share = new Intent(Intent.ACTION_SEND);
                 share.setType("text/plain");
                 share.putExtra(Intent.EXTRA_TEXT, "Import our DareDash player list to your phone (requires DareDash installed): " + invitation +
-                    "\\nThis copies the roster only; turns and scores do not sync between phones.");
+                    "\nThis copies the roster only; turns and scores do not sync between phones.");
                 startActivity(Intent.createChooser(share, "Share local player list"));
             }).show();
     }
@@ -191,12 +191,12 @@ public final class MainActivity extends Activity implements BillingManager.Liste
 
     /** Privacy notice is readable offline; public copy must also be hosted for Google Play. */
     private void showPrivacyPolicy() {
-        String policy = "Last updated: October 15, 2026.\\n\\n"
-            + "DareDash is a pass-and-play game. You do not need an account. Player names are saved locally on this phone and can be deleted using Clear saved players. Scores are only used during gameplay.\\n\\n"
-            + "Friends invited through WhatsApp, SMS or other apps receive the message you choose. If you explicitly share a player list, the chosen app receives the selected local names. We do not offer synchronized online rooms.\\n\\n"
-            + "DareDash integrates Google AdMob advertising and Google's User Messaging Platform (UMP). According to Google's published disclosure, AdMob may collect IP address and infer general location, advertising/device identifiers, app and ad interaction data, and diagnostics for advertising, measurement and fraud prevention. Consent options are offered when required. See policies.google.com/privacy.\\n\\n"
-            + "The initial public launch has no active paid products. If purchases are enabled in a future release, this notice will be updated to cover purchase verification.\\n\\n"
-            + "Player names stay on the phone until cleared in the app or Android settings. Google and advertising partners have their own retention rules. No camera, microphone, contacts or precise-location permissions are requested.\\n\\n"
+        String policy = "Last updated: October 15, 2026.\n\n"
+            + "DareDash is a pass-and-play game. You do not need an account. Player names are saved locally on this phone and can be deleted using Clear saved players. Scores are only used during gameplay.\n\n"
+            + "Friends invited through WhatsApp, SMS or other apps receive the message you choose. If you explicitly share a player list, the chosen app receives the selected local names. We do not offer synchronized online rooms.\n\n"
+            + "DareDash integrates Google AdMob advertising and Google's User Messaging Platform (UMP). According to Google's published disclosure, AdMob may collect IP address and infer general location, advertising/device identifiers, app and ad interaction data, and diagnostics for advertising, measurement and fraud prevention. Consent options are offered when required. See policies.google.com/privacy.\n\n"
+            + "The initial public launch has no active paid products. If purchases are enabled in a future release, this notice will be updated to cover purchase verification.\n\n"
+            + "Player names stay on the phone until cleared in the app or Android settings. Google and advertising partners have their own retention rules. No camera, microphone, contacts or precise-location permissions are requested.\n\n"
             + "Support and privacy contact: see the DareDash developer website linked from the Play Store listing.";
         new android.app.AlertDialog.Builder(this)
             .setTitle("DareDash Privacy Policy")
