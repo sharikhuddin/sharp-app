@@ -28,6 +28,8 @@ jobs:
           "$SDKMANAGER" 'platforms;android-36' 'build-tools;35.0.0'
       - name: Compile and package debug APK
         run: gradle :app:assembleDebug --stacktrace
+      - name: Validate game tests and debug Android lint
+        run: gradle :app:testDebugUnitTest :app:lintDebug --stacktrace
       - name: Validate release APK and AAB compilation (unsigned, not for distribution)
         run: gradle :app:assembleRelease :app:bundleRelease --stacktrace
       - uses: actions/upload-artifact@v4

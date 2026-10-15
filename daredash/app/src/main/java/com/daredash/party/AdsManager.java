@@ -82,7 +82,10 @@ final class AdsManager {
         if (!canShowAds()) return null;
         AdView view = new AdView(activity);
         view.setAdUnitId(BuildConfig.BANNER_AD_UNIT_ID);
-        view.setAdSize(AdSize.BANNER);
+        // Adaptive banners fit compact devices (320dp fixed banners can clip).
+        float density = activity.getResources().getDisplayMetrics().density;
+        int availableDp = Math.max(1, (int)(activity.getResources().getDisplayMetrics().widthPixels / density) - 44);
+        view.setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(activity, availableDp));
         view.loadAd(new AdRequest.Builder().build());
         return view;
     }

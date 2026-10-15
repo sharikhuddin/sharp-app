@@ -14,6 +14,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.view.WindowInsets;
+import org.json.JSONArray;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -38,6 +42,8 @@ public final class MainActivity extends Activity implements BillingManager.Liste
     private static final int MUTED = Color.rgb(186, 188, 217);
     private static final int PURPLE = Color.rgb(118, 85, 255);
     private static final int GOLD = Color.rgb(255, 201, 101);
+    private static final int MAX_PLAYERS = 24;
+    private static final String STORE_NAME = "daredash_local_players_v1";
 
     private final List<String> players = new ArrayList<>();
     private final Map<String, Integer> scores = new HashMap<>();
@@ -54,13 +60,14 @@ public final class MainActivity extends Activity implements BillingManager.Liste
     private AdView banner;
     private AdsManager ads;
     private BillingManager billing;
+    private SharedPreferences localPlayers;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
         getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(BG);
-        players.add("Player 1");
-        players.add("Player 2");
+        localPlayers = getSharedPreferences(STORE_NAME, MODE_PRIVATE);
+        restorePlayerNames();
         ads = new AdsManager(this);
         billing = new BillingManager(this, this);
         showHome();
@@ -77,39 +84,89 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         handleInvite(intent);
     }
 
+    /** Keep invited friends on this device across app restarts. No roster is sent to a server. */
+    private void restorePlayerNames() {
+        players.clear();
+        String saved = localPlayers.getString("names", "");
+        try {
+            JSONArray items = new JSONArray(saved);
+            for (int i = 0; i < items.length() && players.size() < MAX_PLAYERS; i++) {
+                String name = items.optString(i, "").trim();
+                if (!name.isEmpty() && name.length() <= 24 && !hasPlayer(name)) players.add(name);
+            }
+        } catch (Exception ignored) { /* Missing/corrupt local roster: use defaults. */ }
+        if (players.isEmpty() && saved.isEmpty()) {
+            players.add("Player 1");
+            players.add("Player 2");
+        }
+    }
+
+    private void savePlayerNames() {
+        JSONArray names = new JSONArray();
+        for (String player : players) names.put(player);
+        localPlayers.edit().putString("names", names.toString()).apply();
+    }
+
+    private boolean hasPlayer(String name) {
+        for (String existing : players) if (existing.equalsIgnoreCase(name)) return true;
+        return false;
+    }
+
+    private boolean addNamedPlayer(String value) {
+        String name = value.trim();
+        if (name.isEmpty() || name.length() > 24 || players.size() >= MAX_PLAYERS || hasPlayer(name)) return false;
+        players.add(name);
+        return true;
+    }
+
     private void handleInvite(Intent intent) {
         if (intent == null || intent.getData() == null) return;
         Uri uri = intent.getData();
         if (!"daredash".equals(uri.getScheme()) || !"invite".equals(uri.getHost())) return;
         String names = uri.getQueryParameter("players");
-        if (names == null || names.length() > 500) return;
+        if (names == null || names.length() > 1200) return;
         int added = 0;
         for (String candidate : names.split(",")) {
             String name = candidate.trim();
-            if (name.length() < 1 || name.length() > 24 || players.size() >= 8) continue;
-            boolean duplicate = false;
-            for (String existing : players) if (existing.equalsIgnoreCase(name)) duplicate = true;
-            if (!duplicate) { players.add(name); added++; }
+            if (addNamedPlayer(name)) added++;
         }
         if (added > 0) {
+            savePlayerNames();
             showHome();
-            toast("Imported " + added + " player(s). This invite sets up a local game; it does not sync live turns.");
+            toast("Imported " + added + " friends. Play together on this phone.");
         }
     }
 
+    /** Invite without sharing anyone's name or scores. */
     private void shareInvite() {
-        StringBuilder names = new StringBuilder();
-        for (String player : players) {
-            if (names.length() > 0) names.append(',');
-            names.append(player.replace(",", " "));
-        }
-        String invitation = "daredash://invite?players=" + Uri.encode(names.toString());
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");
         share.putExtra(Intent.EXTRA_TEXT,
-            "Join our DareDash party! We play together on one phone. " +
-            "Add your name to the host's game. You can also import our player list on your phone if DareDash is installed: " + invitation);
-        startActivity(Intent.createChooser(share, "Invite friends with WhatsApp, SMS or more"));
+            "🎉 You're invited to DareDash! Bring your friends and play Truth, Dare, Would You Rather and more. " +
+            "No account needed — everyone can join the same in-person game using the host's phone. " +
+            "Download when it launches on Google Play: https://play.google.com/store/apps/details?id=com.daredash.party");
+        startActivity(Intent.createChooser(share, "Invite by WhatsApp, SMS, email and more"));
+    }
+
+    /** Optional roster export, explicitly confirmed because it includes players' chosen names. */
+    private void shareRoster() {
+        new android.app.AlertDialog.Builder(this)
+            .setTitle("Share player names?")
+            .setMessage("This will share the names in your local party roster with the app you choose. Do not share without players' permission. This does not create an online multiplayer room.")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Share roster", (dialog, which) -> {
+                StringBuilder names = new StringBuilder();
+                for (String player : players) {
+                    if (names.length() > 0) names.append(',');
+                    names.append(player.replace(",", " "));
+                }
+                String invitation = "daredash://invite?players=" + Uri.encode(names.toString());
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("text/plain");
+                share.putExtra(Intent.EXTRA_TEXT, "Import our DareDash player list to your phone (requires DareDash installed): " + invitation +
+                    "\\nThis copies the roster only; turns and scores do not sync between phones.");
+                startActivity(Intent.createChooser(share, "Share local player list"));
+            }).show();
     }
 
     private void addMultiplePlayers() {
@@ -118,18 +175,16 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         field.setSingleLine(false);
         new android.app.AlertDialog.Builder(this)
             .setTitle("Add several friends")
-            .setMessage("Separate names with commas. Maximum 8 total players.")
+            .setMessage("Separate names with commas. Maximum " + MAX_PLAYERS + " total players.")
             .setView(field)
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Add players", (d, which) -> {
                 int added = 0;
                 for (String raw : field.getText().toString().split(",")) {
                     String name = raw.trim();
-                    if (name.isEmpty() || name.length() > 24 || players.size() >= 8) continue;
-                    boolean exists = false;
-                    for (String existing : players) if (existing.equalsIgnoreCase(name)) exists = true;
-                    if (!exists) { players.add(name); added++; }
+                    if (addNamedPlayer(name)) added++;
                 }
+                if (added > 0) savePlayerNames();
                 toast("Added " + added + " friends.");
                 showHome();
             }).show();
@@ -193,6 +248,12 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(true);
         scroll.setBackgroundColor(BG);
+        scroll.setClipToPadding(false);
+        // Android 15/16 draws edge-to-edge. Respect status/navigation and gesture insets.
+        scroll.setOnApplyWindowInsetsListener((view, insets) -> {
+            scroll.setPadding(0, insets.getSystemWindowInsetTop(), 0, insets.getSystemWindowInsetBottom());
+            return insets;
+        });
         main = column(22);
         main.setPadding(dp(22), dp(25), dp(22), dp(36));
         scroll.addView(main);
@@ -222,7 +283,7 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         gap(main, 5);
         try {
             banner = ads.makeBanner();
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, dp(55));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
             params.gravity = Gravity.CENTER_HORIZONTAL;
             if (banner != null) main.addView(banner, params);
             else main.removeView(label);
@@ -234,14 +295,14 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         showPage("Your next unforgettable game night starts here.");
         tile("Play together", "Pick a mode, take turns, earn points, and laugh. Safe, lighthearted challenges for friends and families.", "🎉");
         gap(main, 20);
-        main.addView(text("YOUR PLAYERS", 13, GOLD, true));
+        main.addView(text("YOUR PLAYERS  ·  " + players.size() + " / " + MAX_PLAYERS, 13, GOLD, true));
         gap(main, 10);
         for (String player : new ArrayList<>(players)) {
             LinearLayout r = row();
             TextView name = text("●  " + player, 16, WHITE, true);
             r.addView(name, new LinearLayout.LayoutParams(0, dp(47), 1));
             name.setGravity(Gravity.CENTER_VERTICAL);
-            TextView remove = action("×", PANEL, MUTED, () -> { players.remove(player); showHome(); });
+            TextView remove = action("×", PANEL, MUTED, () -> { players.remove(player); savePlayerNames(); showHome(); });
             r.addView(remove, new LinearLayout.LayoutParams(dp(48), dp(43)));
             main.addView(r);
             gap(main, 4);
@@ -264,9 +325,11 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         gap(main, 10);
         main.addView(action("👥  Add several friends", PANEL, WHITE, this::addMultiplePlayers));
         gap(main, 10);
-        main.addView(action("📨  Invite via WhatsApp, SMS or any app", PANEL, WHITE, this::shareInvite));
+        main.addView(action("📨  Invite more friends via WhatsApp, SMS or email", PANEL, WHITE, this::shareInvite));
+        gap(main, 10);
+        main.addView(action("🔗  Share this party's player list (opt-in)", PANEL, WHITE, this::shareRoster));
         gap(main, 7);
-        main.addView(text("Invitations are for pass-and-play on one phone. Remote synchronized rooms need an online backend.", 12, MUTED, false));
+        main.addView(text("Invite anyone to install DareDash or add up to " + MAX_PLAYERS + " names here. This version is pass-and-play; remote live rooms are not supported.", 12, MUTED, false));
         gap(main, 20);
         main.addView(text("CHOOSE A GAME", 13, GOLD, true));
         gap(main, 9);
@@ -287,9 +350,10 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         String player = input.getText().toString().trim();
         if (player.length() > 24) { toast("Names must be 24 characters or fewer."); return; }
         if (player.isEmpty()) { toast("Enter a player name first."); return; }
-        if (players.size() >= 8) { toast("Maximum 8 players per game."); return; }
-        for (String p : players) if (p.equalsIgnoreCase(player)) { toast("Name already in use."); return; }
+        if (players.size() >= MAX_PLAYERS) { toast("Maximum " + MAX_PLAYERS + " players per game."); return; }
+        if (hasPlayer(player)) { toast("Name already in use."); return; }
         players.add(player);
+        savePlayerNames();
         InputMethodManager keyboard = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (keyboard != null) keyboard.hideSoftInputFromWindow(input.getWindowToken(), 0);
         showHome();

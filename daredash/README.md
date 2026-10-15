@@ -1,3 +1,7 @@
+# DareDash v1.4 — invitations, 24-player groups and Play release checks
+
+Current version adds persistent 24-person party rosters, privacy-aware invitations and better Android 16 screen layout. Play Store release remains blocked only by owner account actions, signed upload key and store policy materials; see [release readiness](play-store/RELEASE_READINESS_V1_4.md).
+
 # DareDash v1.3 — AdMob production App + Banner IDs added (2026-10-15)
 
 **Ads-first build:** Release uses the user-provided production AdMob App ID and Banner unit ID. The supplied Rewarded ID was identical to Banner, so Rewarded ads are disabled in release until a valid *different* Rewarded unit is provided. Debug stays on Google test ads. **Production approval and AdMob payouts are not active merely because IDs are compiled.**
