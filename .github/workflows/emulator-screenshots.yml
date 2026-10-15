@@ -32,10 +32,7 @@ jobs:
           arch: x86_64
           profile: pixel_6
           disable-animations: true
-          script: |
-            cd daredash
-            gradle :app:assembleDebug --stacktrace
-            bash tools/capture_screenshots.sh
+          script: cd daredash && gradle :app:assembleDebug --stacktrace && bash tools/capture_screenshots.sh
       - name: Upload real on-device screenshots
         if: always()
         uses: actions/upload-artifact@v4
