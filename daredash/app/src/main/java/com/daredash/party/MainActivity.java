@@ -177,6 +177,34 @@ public final class MainActivity extends Activity implements BillingManager.Liste
             }).show();
     }
 
+    private void clearPlayers() {
+        new android.app.AlertDialog.Builder(this)
+            .setTitle("Clear saved player names?")
+            .setMessage("This removes all guest names from this phone. The next game can start with a new group.")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Clear names", (dialog, which) -> {
+                players.clear();
+                savePlayerNames();
+                showHome();
+            }).show();
+    }
+
+    /** Privacy notice is readable offline; public copy must also be hosted for Google Play. */
+    private void showPrivacyPolicy() {
+        String policy = "Last updated: October 15, 2026.\\n\\n"
+            + "DareDash is a pass-and-play game. You do not need an account. Player names are saved locally on this phone and can be deleted using Clear saved players. Scores are only used during gameplay.\\n\\n"
+            + "Friends invited through WhatsApp, SMS or other apps receive the message you choose. If you explicitly share a player list, the chosen app receives the selected local names. We do not offer synchronized online rooms.\\n\\n"
+            + "DareDash integrates Google AdMob advertising and Google's User Messaging Platform (UMP). According to Google's published disclosure, AdMob may collect IP address and infer general location, advertising/device identifiers, app and ad interaction data, and diagnostics for advertising, measurement and fraud prevention. Consent options are offered when required. See policies.google.com/privacy.\\n\\n"
+            + "The initial public launch has no active paid products. If purchases are enabled in a future release, this notice will be updated to cover purchase verification.\\n\\n"
+            + "Player names stay on the phone until cleared in the app or Android settings. Google and advertising partners have their own retention rules. No camera, microphone, contacts or precise-location permissions are requested.\\n\\n"
+            + "Support and privacy contact: see the DareDash developer website linked from the Play Store listing.";
+        new android.app.AlertDialog.Builder(this)
+            .setTitle("DareDash Privacy Policy")
+            .setMessage(policy)
+            .setPositiveButton("Close", null)
+            .show();
+    }
+
     private void addMultiplePlayers() {
         EditText field = new EditText(this);
         field.setHint("Amina, Sami, Hassan");
@@ -333,6 +361,8 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         gap(main, 10);
         main.addView(action("👥  Add several friends", PANEL, WHITE, this::addMultiplePlayers));
         gap(main, 10);
+        main.addView(action("🗑  Clear saved player names", PANEL, MUTED, this::clearPlayers));
+        gap(main, 10);
         main.addView(action("📨  Invite more friends via WhatsApp, SMS or email", PANEL, WHITE, this::shareInvite));
         gap(main, 10);
         main.addView(action("🔗  Share this party's player list (opt-in)", PANEL, WHITE, this::shareRoster));
@@ -346,6 +376,8 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         main.addView(action("LET'S PLAY  →", PURPLE, WHITE, this::startGame));
         gap(main, 10);
         main.addView(action("🔒  Premium packs & upgrades", PANEL, WHITE, this::showShop));
+        gap(main, 9);
+        main.addView(action("🔐  Read privacy policy", PANEL, WHITE, this::showPrivacyPolicy));
         gap(main, 9);
         main.addView(action("⚙  Advertising privacy choices", PANEL, WHITE,
             () -> ads.showPrivacyOptions(() -> { if (!inGame) showHome(); })));
