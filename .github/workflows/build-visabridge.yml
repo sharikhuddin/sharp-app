@@ -1,0 +1,42 @@
+name: VisaBridge Android (free APK + AAB)
+on:
+  push:
+    branches: [visabridge-android]
+    paths:
+      - 'VisaBridge-Android-CI-source.zip'
+      - '.github/workflows/build-visabridge.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Install Android 16 API 36 build requirements
+        run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
+      - name: Unpack isolated VisaBridge app
+        run: |
+          mkdir -p VisaBridge-Android
+          unzip -q VisaBridge-Android-CI-source.zip -d VisaBridge-Android
+          node --check VisaBridge-Android/app/src/main/assets/app.js
+      - name: Compile installable debug APK and unsigned release AAB
+        working-directory: VisaBridge-Android
+        run: gradle --no-daemon :app:assembleDebug :app:bundleRelease --stacktrace
+      - name: Publish build outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: VisaBridge-APK-and-AAB
+          path: |
+            VisaBridge-Android/app/build/outputs/apk/debug/app-debug.apk
+            VisaBridge-Android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+          if-no-files-found: error
