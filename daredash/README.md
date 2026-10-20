@@ -1,3 +1,7 @@
+# DareDash v1.5 — fresh teal-night theme, shuffle player order and Play release
+
+Version code **6**, version name **1.5.0**. Same application ID and signing key as v1.4. A refreshed midnight-teal interface differentiates this version. The new **Shuffle player order** button randomizes the current party roster, stores it locally, and requires 2+ participants. Play purchases stay disabled until verified backend activation. 
+
 # DareDash v1.4 — invitations, 24-player groups and Play release checks
 
 Current version adds persistent 24-person party rosters, privacy-aware invitations and better Android 16 screen layout. Play Store release remains blocked only by owner account actions, signed upload key and store policy materials; see [release readiness](play-store/RELEASE_READINESS_V1_4.md).

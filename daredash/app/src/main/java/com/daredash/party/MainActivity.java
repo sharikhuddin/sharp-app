@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.ads.AdView;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,11 +40,11 @@ import java.util.Set;
 
 /** Entire app works offline (except optional ads/purchases). No server or login required. */
 public final class MainActivity extends Activity implements BillingManager.Listener {
-    private static final int BG = Color.rgb(18, 17, 47);
-    private static final int PANEL = Color.rgb(36, 34, 81);
+    private static final int BG = Color.rgb(8, 29, 43);
+    private static final int PANEL = Color.rgb(24, 51, 70);
     private static final int WHITE = Color.WHITE;
     private static final int MUTED = Color.rgb(186, 188, 217);
-    private static final int PURPLE = Color.rgb(118, 85, 255);
+    private static final int PURPLE = Color.rgb(14, 157, 166);
     private static final int GOLD = Color.rgb(255, 201, 101);
     private static final int MAX_PLAYERS = 24;
     private static final String STORE_NAME = "daredash_local_players_v1";
@@ -360,6 +361,14 @@ public final class MainActivity extends Activity implements BillingManager.Liste
         main.addView(add);
         gap(main, 10);
         main.addView(action("👥  Add several friends", PANEL, WHITE, this::addMultiplePlayers));
+        gap(main, 10);
+        main.addView(action("🎲  Shuffle player order", PANEL, WHITE, () -> {
+            if (players.size() < 2) { toast("Add at least two players first."); return; }
+            Collections.shuffle(players, random);
+            savePlayerNames();
+            showHome();
+            toast("New playing order is ready!");
+        }));
         gap(main, 10);
         main.addView(action("🗑  Clear saved player names", PANEL, MUTED, this::clearPlayers));
         gap(main, 10);
