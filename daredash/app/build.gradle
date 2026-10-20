@@ -9,7 +9,7 @@ def googleTestRewarded = 'ca-app-pub-3940256099942544/5224354917'
 // Public IDs from the DareDash AdMob account. Optional CI vars can override these.
 // Rewarded ID intentionally blank: the user supplied the same unit for Banner and Rewarded.
 def prodAppId = config('DDA_ADMOB_APP_ID') ?: 'ca-app-pub-5654555743041629~9552640046'
-def prodBannerId = config('DDA_ADMOB_BANNER_UNIT_ID') ?: 'ca-app-pub-5654555743041629/2510834956'
+def prodBannerId = config('DDA_ADMOB_BANNER_UNIT_ID') ?: 'ca-app-pub-5654555743041629/1705194756'
 def prodRewardedId = config('DDA_ADMOB_REWARDED_UNIT_ID')
 def verifyUrl = config('DDA_PURCHASE_VERIFY_URL')
 def billingEnabled = config('DDA_ENABLE_PURCHASES').equalsIgnoreCase('true') && verifyUrl.startsWith('https://')
@@ -25,8 +25,8 @@ android {
         applicationId 'com.daredash.party'
         minSdk 24
         targetSdk 36
-        versionCode 6
-        versionName '1.5.0'
+        versionCode 7
+        versionName '1.5.1'
     }
 
     signingConfigs {
@@ -74,6 +74,8 @@ gradle.taskGraph.whenReady { graph ->
         if (!(prodBannerId ==~ /ca-app-pub-\d{16}\/\d{10}/) ||
             prodBannerId.contains('3940256099942544'))
             throw new GradleException('DareDash needs its real Banner ad unit for release.')
+        if (prodBannerId == 'ca-app-pub-5654555743041629/2510834956')
+            throw new GradleException('Replace the retired DareDash banner ID in GitHub Actions variable DDA_ADMOB_BANNER_UNIT_ID with /1705194756 or remove the variable.')
         if (prodRewardedId) {
             if (!(prodRewardedId ==~ /ca-app-pub-\d{16}\/\d{10}/) ||
                 prodRewardedId == prodBannerId ||

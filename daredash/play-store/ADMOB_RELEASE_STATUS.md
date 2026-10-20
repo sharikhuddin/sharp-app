@@ -1,5 +1,7 @@
 # DareDash — AdMob monetization release checklist
 
+**Update (20 Oct 2026):** The provided AdMob PDF specifies Home Banner unit `ca-app-pub-5654555743041629/1705194756`. DareDash **1.5.1** switches the release default to this ID. See [current AdMob banner setup](ADMOB_BANNER_OCT_20.md). The historical information below reflects October 15 and is superseded.
+
 ## Current verified repository configuration (15 October 2026)
 
 | Item | Value/status |

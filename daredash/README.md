@@ -1,3 +1,7 @@
+# DareDash v1.5.1 — latest AdMob Home Banner integration
+
+Version **1.5.1**, code **7** uses the official AdMob banner ID from the owner's October 20, 2026 Google AdMob PDF. Debug uses Google demo ads; release uses the official banner unit by default. See [AdMob setup](play-store/ADMOB_BANNER_OCT_20.md). Paid upgrades are not live.
+
 # DareDash v1.5 — fresh teal-night theme, shuffle player order and Play release
 
 Version code **6**, version name **1.5.0**. Same application ID and signing key as v1.4. A refreshed midnight-teal interface differentiates this version. The new **Shuffle player order** button randomizes the current party roster, stores it locally, and requires 2+ participants. Play purchases stay disabled until verified backend activation. 
