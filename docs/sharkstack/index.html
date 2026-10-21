@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#061a30"><meta name="description" content="SharkStack Splash: bite, stack, splash! A free ocean block puzzle game.">
+<title>SharkStack Splash — Ocean Block Puzzle</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJiZyIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjMTg3OTk4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDQyYTQ5Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTAiIGZpbGw9InVybCgjYmcpIi8+PHBhdGggZD0iTTY2IDMxOFE4OSAxNTIgMjcwIDE4MkwzNDEgNTdMMzUwIDIwM1E0NDMgMjQ0IDQ0OSAzMzZRMzE0IDQ1MyAxNTMgMzkwWiIgZmlsbD0iIzRjZGVlYSIvPjxwYXRoIGQ9Ik03NiAzMjNRMjcxIDM2MiA0NDUgMzE2UTM5OSA0MjcgMTU1IDM5M1oiIGZpbGw9IiNiOWY4ZmIiLz48Y2lyY2xlIGN4PSIzNDIiIGN5PSIyNzAiIHI9IjIzIiBmaWxsPSIjMGIzNjQ5Ii8+PGNpcmNsZSBjeD0iMzQ5IiBjeT0iMjYzIiByPSI3IiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Im0yODggMzU5IDIzIDI3IDI2LTM2IDIyIDM0IDI4LTM5IiBmaWxsPSJub25lIiBzdHJva2U9IiMxMDQxNWUiIHN0cm9rZS13aWR0aD0iMTUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxnIGZpbGw9IiNmZmQ5NzciPjxyZWN0IHg9Ijg3IiB5PSI3OSIgd2lkdGg9IjU1IiBoZWlnaHQ9IjU1IiByeD0iMTMiLz48cmVjdCB4PSIxNTIiIHk9Ijc5IiB3aWR0aD0iNTUiIGhlaWdodD0iNTUiIHJ4PSIxMyIvPjxyZWN0IHg9Ijg3IiB5PSIxNDQiIHdpZHRoPSI1NSIgaGVpZ2h0PSI1NSIgcng9IjEzIi8+PC9nPjwvc3ZnPgo="><style>:root{--navy:#061a30;--deep:#09253f;--aqua:#41dce6;--muted:#89aec5;--white:#ecfaff;--gold:#ffda77;--cell:#113855;--outline:#326787;--slot:56px}*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:ui-rounded,'Trebuchet MS',system-ui,sans-serif;color:var(--white)}body{background:radial-gradient(circle at 50% -10%,#176783 0%,#0a3d5b 33%,#061b32 76%,#041223 100%);overflow-x:hidden;overscroll-behavior:none}button{font:inherit;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}button:focus-visible,.cell:focus-visible{outline:3px solid var(--gold);outline-offset:2px}.shell{position:relative;z-index:1;max-width:540px;margin:0 auto;padding:max(env(safe-area-inset-top),16px) 19px max(env(safe-area-inset-bottom),16px)}.topbar,.brand,.score-strip,.tagline,.actions,.bottom-bar{display:flex;align-items:center;justify-content:space-between}.brand{gap:10px}.logo{width:61px;height:61px;padding:3px;background:linear-gradient(135deg,#1c779a,#032d50);border:2px solid #51d5e5;border-radius:19px;box-shadow:0 6px 18px #0004}.logo svg{width:100%;height:100%}.brand h1{font-size:25px;letter-spacing:-1.3px;line-height:1;margin:0;font-weight:1000}.brand h1 span{color:var(--aqua)}.brand p{margin:5px 0 0;letter-spacing:2.2px;color:#8cc9da;font-size:10px;font-weight:900}.circle-button{width:42px;height:42px;border-radius:14px;border:1px solid #3d7593;background:#123c56;color:#d3faff;font-size:24px}.score-strip{gap:9px;margin:20px 0 12px}.stat{flex:1;text-align:center;padding:13px 6px 12px;border:1px solid #32718e;border-radius:15px;background:linear-gradient(165deg,#134763,#092a49);box-shadow:inset 0 1px #4aa3bb44,0 6px 14px #0002}.stat small{display:block;font-weight:900;letter-spacing:1.9px;font-size:10px;color:#9ed7e4}.stat strong{display:block;font-size:28px;margin-top:2px;color:var(--white);letter-spacing:.3px;font-variant-numeric:tabular-nums}.stat:nth-child(2) strong{color:var(--gold)}.tagline{min-height:34px;margin-bottom:12px;gap:8px;font-size:12px;font-weight:800;color:#c4e6ec}.pearl{flex-shrink:0;padding:7px 10px;border:1px solid #70816d77;border-radius:13px;background:#113d4d;color:var(--gold)}.board-frame{position:relative;background:linear-gradient(135deg,#2b95b1,#1e567b 56%,#7be6ec);padding:7px;border-radius:21px;box-shadow:0 10px 0 #032b48,0 17px 23px #0007,inset 0 2px 0 #ffffff88;touch-action:none}.board{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));aspect-ratio:1;gap:3px;border-radius:14px;background:#082a45;padding:6px;touch-action:none}.cell{position:relative;border:0;border-radius:6px;background:#174762;box-shadow:inset 0 2px 3px #020f234d;min-width:0;min-height:0;padding:0;touch-action:none}.cell:nth-child(even){background:#16425b}.cell.filled:before,.mini-cell.filled:before{content:'';position:absolute;inset:1px;border-radius:5px;background:var(--block);box-shadow:inset 2px 3px 0 #ffffff5e,inset -2px -4px 0 #00000036,0 1px 3px #0002}.cell.filled:after{content:'';position:absolute;top:12%;left:17%;width:30%;height:10%;border-radius:9px;background:#fff5}.cell.preview:not(.filled){background:#46edc490;box-shadow:inset 0 0 0 2px #d7fff1}.cell.invalid{background:#ec527f77;box-shadow:inset 0 0 0 2px #ffb0bd}.score-popup{position:absolute;inset:35% 0 auto;text-align:center;font-weight:1000;font-size:42px;color:#ffe795;text-shadow:0 4px 0 #17415e,0 5px 12px #0007;opacity:0;pointer-events:none}.score-popup.show{animation:floatScore .9s ease-out forwards}@keyframes floatScore{10%{opacity:1;transform:scale(1.12)}80%{opacity:1}100%{opacity:0;transform:translateY(-50px)}}.instructions{text-align:center;margin:25px 0 13px;font-size:10px;letter-spacing:1.15px;font-weight:1000;color:#afd5e0}.instructions span{color:var(--gold)}.tray{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:13px}.piece-card{position:relative;min-height:100px;border-radius:16px;border:2px solid #2c7090;background:linear-gradient(145deg,#123b55,#0a2947);display:flex;justify-content:center;align-items:center;touch-action:none;transition:background .15s,transform .15s}.piece-card.selected{border-color:var(--gold);background:#174d66;box-shadow:0 0 0 3px #ffe4953d;transform:translateY(-4px)}.piece-card.empty{opacity:.35;border-style:dashed}.piece-card .tag{position:absolute;bottom:4px;right:7px;font-size:9px;font-weight:900;color:#98c3d0}.mini-grid{display:grid;gap:3px;justify-content:center;align-content:center}.mini-cell{width:min(16px,4.2vw);height:min(16px,4.2vw);position:relative;border-radius:4px}.mini-cell.filled:before{border-radius:4px;inset:0}.actions{gap:10px}.action{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;background:linear-gradient(#15516a,#0e344e);border:1px solid #43819c;color:var(--aqua);border-radius:14px;flex:1;padding:9px 4px 10px;font-size:24px;font-weight:900;min-height:64px}.action span{color:#d4eff9;font-size:12px}.action small{font-size:10px;color:#ffdf84}.action:disabled{opacity:.4;cursor:not-allowed}.bottom-bar{margin-top:17px;gap:10px}.season{display:flex;align-items:center;gap:7px;flex:1;font-size:13px;font-weight:850;color:#9cdded}.season b{margin-left:auto;color:var(--gold)}.new-btn{background:#f3c964;color:#0a2e44;border:0;font-weight:1000;border-radius:12px;padding:11px 15px;box-shadow:0 3px 0 #b98732}footer{text-align:center;font-size:9px;letter-spacing:1.5px;font-weight:800;color:#679cb4;margin-top:30px}.bubble{position:fixed;border:2px solid #6bc5dd25;border-radius:50%;pointer-events:none}.b1{width:175px;height:175px;top:14%;left:-125px}.b2{width:95px;height:95px;top:63%;right:-45px}.b3{width:45px;height:45px;top:80%;left:8%}.modal{position:fixed;z-index:10;inset:0;background:#031222ca;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(7px)}.hidden{display:none!important}.modal-card{background:linear-gradient(150deg,#144e6a,#092841);border:2px solid #72cbd5;border-radius:24px;max-width:370px;width:100%;padding:28px 21px;box-shadow:0 22px 60px #0009;text-align:center}.modal-icon{font-size:50px}.modal-card h2{font-size:29px;margin:10px 0}.modal-card p{line-height:1.5;color:#b0dce4;font-size:14px}.modal-actions{display:flex;flex-direction:column;gap:9px;margin-top:20px}.primary,.secondary{border:0;border-radius:12px;padding:13px;font-weight:900;background:#f1d071;color:#113148}.secondary{background:#164965;border:1px solid #64a9c1;color:#e5f9ff}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#08243a;border:1px solid #87dbe4;color:#fff;padding:10px 18px;border-radius:30px;z-index:20;max-width:92vw;text-align:center;box-shadow:0 10px 32px #0008;font-size:13px;font-weight:800}.drag-ghost{position:fixed;z-index:15;pointer-events:none;transform:translate(-50%,-50%);opacity:.85;padding:7px;background:#0b3153bb;border-radius:8px}@media(max-width:360px){.shell{padding-left:10px;padding-right:10px}.brand h1{font-size:20px}.logo{width:50px;height:50px}.tray{gap:5px}.piece-card{min-height:78px}.board{gap:2px;padding:4px}.instructions{font-size:9px}}@media (min-width:850px){.shell{padding-top:24px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+/* Shark Rewards expansion */
+.header-actions{display:flex;align-items:center;gap:9px}.gift-button{font-size:23px;border-color:#dca857;background:linear-gradient(155deg,#7c4964,#442d62);box-shadow:0 0 19px #ffc56e35}.gift-button.attention{animation:giftPulse 2s ease-in-out infinite}@keyframes giftPulse{50%{box-shadow:0 0 0 7px #ffdb7a22,0 0 28px #ffc56e99;transform:rotate(-6deg)}}
+.pearl-button{font:inherit;cursor:pointer;display:flex;align-items:center;gap:4px;box-shadow:0 3px 12px #0002;font-weight:900}.shop-plus{margin-left:3px;font-size:17px;color:#6bf4e8}
+.quest-progress{height:8px;background:#061d36;border-radius:10px;margin-top:11px;overflow:hidden;border:1px solid #35728a}.quest-progress div{background:linear-gradient(90deg,#31d1ff,#7dfbd2,#ffee97);height:100%;width:0%;transition:width .35s}
+.reward-strip{margin:13px 0 0;padding:12px 13px;border:1px solid #6fbfd182;border-radius:16px;background:linear-gradient(110deg,#16435f,#0c3049 68%,#244963);display:flex;justify-content:space-between;align-items:center;gap:8px;box-shadow:inset 0 1px 0 #ffffff18}.reward-strip strong{font-size:12px;display:block;color:#ffe39f;letter-spacing:.5px}.reward-strip small{font-size:10px;color:#98d8e3;display:block;margin-top:5px}.reward-strip button{background:#ffe08b;color:#0c3049;border:0;border-radius:12px;font-weight:900;padding:11px 14px;white-space:nowrap}
+.board-frame.splash{animation:splashGlow .44s ease-out}@keyframes splashGlow{0%{filter:brightness(1.5);transform:scale(1.01)}100%{filter:brightness(1);transform:scale(1)}}
+.confetti{position:fixed;width:8px;height:14px;z-index:40;border-radius:3px;pointer-events:none;animation:confettiFall .9s ease-out forwards}@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(250px) rotate(440deg);opacity:0}}
+.reward-price{display:inline-block;color:#ffd875;font-weight:900}.modal-card{max-height:min(90dvh,760px);overflow-y:auto}.modal-card h2{font-size:26px}.modal-icon{font-size:42px}.modal-actions button{line-height:1.3}.modal-text-compact{font-size:12px}.reward-note{margin:10px 0 0;font-size:11px;line-height:1.45;color:#a6d6e0}
+@media(prefers-reduced-motion:reduce){.gift-button.attention,.board-frame.splash,.confetti{animation:none!important}*{scroll-behavior:auto!important}}
+
+/* v3 underwater polish: all effects can be disabled using reduced-motion settings. */
+.logo svg{animation:swimTiny 4s ease-in-out infinite;transform-origin:50% 55%}
+@keyframes swimTiny{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-3px) rotate(3deg)}}
+.bubble{animation:floatUp 9s ease-in-out infinite alternate}
+.b2{animation-delay:-4s;animation-duration:11s}.b3{animation-delay:-1s;animation-duration:7s}
+@keyframes floatUp{0%{transform:translateY(8px) scale(.93);opacity:.6}100%{transform:translateY(-35px) scale(1.06);opacity:1}}
+.reward-strip{background:linear-gradient(110deg,#12435e,#133d58 50%,#3b5069);border-color:#8bd8e199}
+.reward-strip button{box-shadow:0 3px 0 #bf8e3f;transition:transform .12s}.reward-strip button:active{transform:translateY(2px)}
+.modal-actions .primary{background:linear-gradient(160deg,#fff0ae,#f3be52);box-shadow:inset 0 1px 0 #fff7cc;}
+.modal-actions .secondary{background:linear-gradient(160deg,#1d5c78,#0b3b59)}
+button:active{filter:brightness(1.13)}
+@media(prefers-reduced-motion:reduce){.logo svg,.bubble{animation:none!important}}
+
+/* v6: phone-first one-screen game. Board shrinks to real remaining viewport height. */
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+.shell{height:100dvh;max-height:100dvh;display:flex;flex-direction:column;gap:clamp(3px,.65dvh,8px);padding:max(env(safe-area-inset-top),6px) 12px max(env(safe-area-inset-bottom),5px);overflow:hidden}
+.shell>*,.topbar,.score-strip,.tagline{flex-shrink:0;min-height:0}
+.topbar{min-height:42px}.logo{width:42px;height:42px;border-radius:13px}.brand h1{font-size:19px}.brand p{font-size:8px;letter-spacing:1px;margin-top:2px}
+.circle-button{width:34px;height:34px;font-size:19px;border-radius:11px}.header-actions{gap:5px}
+.score-strip{margin:0;gap:6px}.stat{padding:5px 4px;border-radius:10px}.stat small{font-size:8px;letter-spacing:1px}.stat strong{font-size:20px;margin-top:0}
+.tagline{min-height:23px;margin:0;gap:5px;font-size:11px}.pearl{padding:5px 7px;border-radius:10px}
+.board-frame{width:var(--board-size,min(100%,42dvh));align-self:center;border-radius:16px;padding:5px;box-shadow:0 4px 0 #032b48,0 8px 16px #0006}.board{padding:4px;gap:2px;border-radius:10px}.cell{border-radius:4px}
+.instructions{margin:0;line-height:1.3;font-size:9px;letter-spacing:.45px}.tray{margin:0;gap:6px}.piece-card{min-height:clamp(45px,9dvh,67px);border-radius:11px}.mini-grid{gap:2px}.mini-cell{width:min(14px,3.5vw);height:min(14px,3.5vw)}
+.piece-card.selected:after{content:'↻';position:absolute;top:1px;right:6px;font-size:12px;color:#ffde88}.piece-card .tag{font-size:8px;bottom:2px}
+.actions{gap:6px}.action{min-height:clamp(40px,7dvh,53px);padding:4px 3px;font-size:20px;border-radius:11px;gap:0}.action span{font-size:10px}.action small{font-size:9px}
+.bottom-bar{margin:0;min-height:30px}.season{font-size:11px}.new-btn{padding:7px 10px;font-size:11px}.quest-progress{height:4px;margin:0}
+.reward-strip{margin:0;padding:7px 9px;border-radius:11px}.reward-strip strong{font-size:10px}.reward-strip small{font-size:9px;margin-top:2px}.reward-strip button{padding:7px 9px;font-size:11px}footer{margin:0;font-size:7px;letter-spacing:.55px}
+.toast{bottom:clamp(8px,4dvh,24px);font-size:12px}.modal{padding:10px}.modal-card{max-height:90dvh;overflow-y:auto;padding:15px}.modal-card h2{font-size:20px}.modal-icon{font-size:25px}.modal-card p{font-size:12px;margin:8px 0}.modal-actions{gap:6px;margin-top:10px}.modal-actions button{padding:10px}
+@media(max-height:710px){.reward-strip,footer{display:none}.piece-card{min-height:43px}.topbar{min-height:36px}.logo{width:35px;height:35px}.stat{padding:3px}.stat strong{font-size:17px}.instructions{font-size:8px}}
+@media(max-height:575px){.instructions,.quest-progress{display:none}.piece-card{min-height:35px}.action{min-height:36px}.circle-button{width:30px;height:30px}.season{font-size:10px}}
+
+/* v1.4 Shark Crew: modal-only social UI, zero additional game-screen height. */
+.crew-button{font-size:18px;border-color:#43dfc1;background:#124d56}
+.crew-card{text-align:left;max-width:430px;max-height:calc(100dvh - 18px);overflow-y:auto;overscroll-behavior:contain;padding:16px;border-radius:18px}
+.crew-head{display:flex;align-items:center;justify-content:space-between;font-size:25px}.crew-head button{font-size:26px}
+.crew-card h2{margin:4px 0;font-size:23px}.crew-card p{font-size:12px;line-height:1.36;color:#c8e6f0;margin:5px 0 8px}
+.crew-label{display:block;font-size:11px;font-weight:800;color:#c3eef5;margin:6px 0 3px}
+.crew-input{width:100%;min-width:0;border:1px solid #6daabf;background:#092b45;color:#f6faff;border-radius:10px;padding:10px;font-size:14px;letter-spacing:.25px}
+.crew-input:focus-visible{outline:2px solid #ffdd84}
+.crew-code{background:#082b44;border:1px dashed #64cdd8;border-radius:12px;margin:9px 0;padding:8px;text-align:center}
+.crew-code small{font-size:9px;color:#b3d7e4;display:block;letter-spacing:1px}
+.crew-code strong{display:block;font-size:24px;letter-spacing:1.2px;color:#ffdf85}
+.crew-quick{display:grid;grid-template-columns:1fr 1fr;gap:6px}.crew-quick button{padding:9px 6px;font-size:11px}.crew-quick button:last-child{grid-column:1/-1}
+.crew-section{border-top:1px solid #4d96ac;margin-top:10px;padding-top:9px}.crew-section>strong{font-size:13px;color:#ffdf89}
+.crew-inline{display:flex;gap:7px}.crew-inline button{font-size:12px;padding:7px 12px}
+.crew-receipt{display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:7px;margin-top:9px;border:1px solid #47cbb3;border-radius:10px;background:#0b3b49}
+.crew-receipt span{font-size:11px}.crew-receipt strong{font-size:15px;text-align:center;overflow-wrap:anywhere}.crew-receipt button{padding:6px;font-size:11px}
+.crew-hint{display:block;margin-top:7px;color:#a1ccd9}.crew-card .crew-disclaimer{color:#9fbfce;font-size:10px;margin-top:10px}.crew-done{width:100%;padding:8px}
+@media(max-width:360px){.brand h1{font-size:17px}.header-actions{gap:3px}.circle-button{width:30px;height:30px}.crew-card{padding:11px}.crew-code strong{font-size:19px}}
+
+/* Online Shark Crew panel; scroll only the modal, never the puzzle page. */
+.cloud-section{border-color:#4ac3d7;background:linear-gradient(145deg,#124a65,#092e4b)}
+.cloud-section .crew-inline{margin:8px 0;flex-wrap:wrap}
+.cloud-section .crew-input{min-width:125px;flex:1}
+.cloud-section button{min-height:40px}
+#cloudConnectedPane p{line-height:1.6}
+#cloudFriendCode{color:var(--gold);letter-spacing:.07em;overflow-wrap:anywhere}
+
+</style>
+</head><body>
+<div class="bubble b1"></div><div class="bubble b2"></div><div class="bubble b3"></div>
+<main class="shell">
+<header class="topbar">
+  <div class="brand"><div class="logo"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M7 49Q16 17 40 25L52 6L56 31Q74 39 74 51Q52 73 23 63Z" fill="#42d8e8"/><path d="M9 50Q42 55 73 48Q64 68 23 63Z" fill="#a9f1fa"/><circle cx="53" cy="38" r="3.4" fill="#062439"/><path d="M46 51l6 6 5-8 5 7 5-8" stroke="#0a4764" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+  <div><h1>SHARK<span>STACK</span></h1><p>SPLASH · BLOCK PUZZLE</p></div></div>
+  <div class="header-actions"><button id="crewBtn" class="circle-button crew-button" aria-label="Friends and score sharing" title="Shark Crew">👥</button><button id="dailyBtn" class="circle-button gift-button" aria-label="Daily reward">🎁</button><button id="settingsBtn" class="circle-button" aria-label="Settings">⚙</button></div>
+</header>
+<section class="score-strip" aria-label="Score"><div class="stat"><small>SCORE</small><strong id="score">0</strong></div><div class="stat"><small>BEST</small><strong id="best">0</strong></div><div class="stat"><small>LEVEL</small><strong id="level">1</strong></div></section>
+<div class="tagline"><span id="message" role="status" aria-live="polite">🦈 Feed the shark — clear rows &amp; columns!</span><button id="shopBtn" class="pearl pearl-button" aria-label="Open reward shop">💎 <b id="pearls">0</b> <span class="shop-plus">＋</span></button></div>
+<section class="board-frame" aria-label="8 by 8 block puzzle board"><div id="board" class="board" role="grid" aria-label="Puzzle grid"></div><div id="scorePopup" class="score-popup" aria-hidden="true"></div></section>
+<div class="instructions">TAP SHAPE TO ROTATE ↻ <span>·</span> TAP GRID OR DRAG TO PLACE</div>
+<section class="tray" id="tray" aria-label="Available block shapes"></section>
+<section class="actions"><button id="rotateBtn" class="action">↻ <span>Rotate</span></button><button id="undoBtn" class="action">↶ <span>Undo <small id="undoCost">(3 ✦)</small></span></button><button id="hintBtn" class="action">✧ <span>Hint</span></button></section>
+<section class="bottom-bar"><div class="season">🌊 <span>Ocean Quest</span><b id="quest">0 / 15</b></div><button id="newBtn" class="new-btn">New game</button></section>
+<section class="quest-progress" aria-label="Ocean Quest progress"><div id="questProgress"></div></section>
+<section class="reward-strip"><div><strong>🦈 SHARK TREASURE SHOP</strong><small>Free rewards + optional pearl packs</small></div><button id="openRewardsBtn">Shop ↗</button></section>
+<footer>SHARKSTACK SPLASH · FREE TO PLAY · NO CASH VALUE FOR PEARLS</footer>
+</main>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-card"><div class="modal-icon" id="modalIcon">🦈</div><h2 id="modalTitle">Game Over</h2><p id="modalText"></p><div class="modal-actions" id="modalActions"></div></div></div>
+<div id="crewModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="crewTitle">
+  <div class="modal-card crew-card">
+    <div class="crew-head"><span aria-hidden="true">🦈👥</span><button id="crewClose" class="circle-button" type="button" aria-label="Close friends">×</button></div>
+    <h2 id="crewTitle">Shark Crew</h2><p class="crew-caption">Challenge friends, share your score, earn Shark Pearls together.</p>
+    <label class="crew-label" for="crewNickname">Your captain name (optional)</label>
+    <input id="crewNickname" class="crew-input" type="text" maxlength="18" autocomplete="nickname" placeholder="Captain"/>
+    <div class="crew-code"><small>YOUR FRIEND CODE</small><strong id="crewCode"></strong></div>
+    <div class="crew-quick"><button id="shareScoreBtn" class="primary" type="button">🏆 Share my score</button><button id="shareInviteBtn" class="secondary" type="button">📨 Invite friends</button><button id="copyInviteBtn" class="secondary" type="button">Copy invitation</button></div>
+    <div class="crew-section"><strong>🎁 New player welcome: +15 💎</strong><p>Got a friend's SS- code? Enter it once to get welcome pearls. Then send them your confirmation code.</p>
+      <label class="crew-label" for="joinCodeInput">Friend's invitation code</label><div class="crew-inline"><input id="joinCodeInput" class="crew-input" type="text" autocapitalize="characters" maxlength="11" placeholder="SS-1234ABCD"/><button id="joinCrewBtn" class="primary" type="button">Join</button></div>
+      <div id="crewReceiptArea" class="crew-receipt hidden"><span>Send this code back to your friend:</span><strong id="crewReceipt"></strong><button id="shareReceiptBtn" class="secondary" type="button">📨 Share confirmation</button><button id="copyReceiptBtn" class="secondary" type="button">Copy code</button></div>
+    </div>
+    <div class="crew-section"><strong>🤝 Friend join bonuses: +20 💎</strong><p>When your invited friend joins, they send a confirmation beginning SJ-. Enter it to unlock pearls. Limit: 2 per day, 10 total.</p>
+      <label class="crew-label" for="claimCodeInput">Friend's confirmation code</label><div class="crew-inline"><input id="claimCodeInput" class="crew-input" type="text" autocapitalize="characters" maxlength="20" placeholder="SJ-1234ABCD-5678EF90"/><button id="claimCrewBtn" class="primary" type="button">Claim</button></div>
+      <small id="crewStatus" class="crew-hint"></small>
+    </div>
+    <section id="cloudSection" class="crew-section cloud-section hidden" aria-label="Verified Shark Crew account">
+      <strong>☁️ Verified Shark Crew</strong>
+      <p>Optional account for verified friend rewards. A code is emailed to you; no password needed. Play without signing in anytime.</p>
+      <div id="cloudAuthPane">
+        <label class="crew-label" for="cloudEmail">Email address</label>
+        <input id="cloudEmail" type="email" class="crew-input" autocomplete="email" placeholder="you@example.com"/>
+        <div class="crew-inline"><button id="cloudRequest" class="primary" type="button">Send sign-in code</button></div>
+        <label class="crew-label" for="cloudOtp">Email verification code</label>
+        <div class="crew-inline"><input id="cloudOtp" class="crew-input" inputmode="numeric" maxlength="8" placeholder="6-digit code"/><button id="cloudVerify" class="secondary" type="button">Verify</button></div>
+      </div>
+      <div id="cloudConnectedPane" class="hidden">
+        <p>Signed in. Your verified friend code is <strong id="cloudFriendCode">…</strong></p>
+        <label class="crew-label" for="cloudJoinCode">Invited by a friend?</label>
+        <div class="crew-inline"><input id="cloudJoinCode" class="crew-input" placeholder="SS-1234ABCD" maxlength="11"/><button id="cloudJoin" class="primary" type="button">Join crew</button></div>
+        <div class="crew-inline"><button id="cloudClaim" class="secondary" type="button">Collect verified pearls</button><button id="cloudLogout" class="secondary" type="button">Sign out</button><button id="cloudDeleteAccount" class="secondary" type="button" aria-label="Permanently delete verified Shark Crew account">Delete account</button></div>
+      </div>
+      <p class="crew-hint" id="cloudStatus" role="status">Verification protects bonus claims; not all fake accounts can be prevented.</p>
+    </section>
+    <p class="crew-disclaimer">No social login is required. Sharing is always your choice. Offline friend codes are not server-verified and have no cash value.</p>
+    <button id="crewDone" class="secondary crew-done" type="button">Back to puzzle</button>
+  </div>
+</div>
+<div id="toast" class="toast hidden" role="status"></div>
+<script>
+/* Blocks Grid Quest core rules. No dependencies; testable in Node and usable in browsers. */
+(function (root, factory) {
+  const exported = factory();
+  if (typeof module === 'object' && module.exports) module.exports = exported;
+  else root.BlocksEngine = exported;
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+  const SIZE = 8;
+  const SHAPES = [
+    [[0,0]], [[0,0],[1,0]], [[0,0],[1,0],[2,0]], [[0,0],[1,0],[2,0],[3,0]],
+    [[0,0],[1,0],[2,0],[3,0],[4,0]], [[0,0],[0,1]], [[0,0],[0,1],[0,2]],
+    [[0,0],[0,1],[0,2],[0,3]], [[0,0],[1,0],[0,1],[1,1]],
+    [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1]],
+    [[0,0],[1,0],[2,0],[0,1],[1,1],[2,1],[0,2],[1,2],[2,2]],
+    [[0,0],[1,0],[0,1]], [[0,0],[1,0],[1,1]], [[0,0],[0,1],[1,1]],
+    [[1,0],[0,1],[1,1]], [[0,0],[0,1],[0,2],[1,2]],
+    [[0,0],[1,0],[2,0],[1,1]], [[1,0],[0,1],[1,1],[2,1]],
+    [[0,0],[1,0],[1,1],[2,1]], [[0,0],[0,1],[1,1],[1,2]],
+    [[0,0],[1,0],[2,0],[1,1],[1,2]], [[0,0],[1,0],[0,1],[0,2]],
+    [[0,0],[1,0],[2,0],[2,1]], [[0,0],[1,0],[0,1],[1,1],[0,2]],
+    [[0,0],[1,0],[1,1],[1,2]], [[0,0],[1,0],[2,0],[3,0],[1,1]],
+  ];
+  const COLORS = ['#46d5f6','#ffba52','#b68aff','#70ebad','#fd7aab','#8ea8ff'];
+
+  function normalized(cells) {
+    const minX = Math.min(...cells.map(p => p[0]));
+    const minY = Math.min(...cells.map(p => p[1]));
+    return cells.map(p => [p[0] - minX, p[1] - minY]);
+  }
+  function rotate(cells) { return normalized(cells.map(([x,y]) => [-y,x])); }
+  function width(cells) { return 1 + Math.max(...cells.map(p => p[0])); }
+  function height(cells) { return 1 + Math.max(...cells.map(p => p[1])); }
+  function canPlace(grid, cells, x, y) {
+    return cells.every(([dx,dy]) => {
+      const col = x + dx, row = y + dy;
+      return col >= 0 && row >= 0 && col < SIZE && row < SIZE && !grid[row][col];
+    });
+  }
+  function allRotations(cells) {
+    const list = []; let current = cells;
+    for (let i = 0; i < 4; i++) {
+      const key = current.map(p => p.join(',')).sort().join('|');
+      if (!list.some(p => p.key === key)) list.push({cells: current, key});
+      current = rotate(current);
+    }
+    return list.map(p => p.cells);
+  }
+  function findFit(grid, piece, rotated = true) {
+    if (!piece) return null;
+    const variants = rotated ? allRotations(piece.cells) : [piece.cells];
+    for (const cells of variants) {
+      for (let y = 0; y < SIZE - height(cells) + 1; y++)
+        for (let x = 0; x < SIZE - width(cells) + 1; x++)
+          if (canPlace(grid, cells, x, y)) return {x,y,cells};
+    }
+    return null;
+  }
+  function clearCompleteLines(grid) {
+    const fullRows = [], fullCols = [];
+    for (let y = 0; y < SIZE; y++)
+      if (grid[y].every(Boolean)) fullRows.push(y);
+    for (let x = 0; x < SIZE; x++)
+      if (grid.every(row => !!row[x])) fullCols.push(x);
+    for (const y of fullRows) grid[y].fill(0);
+    for (const x of fullCols) for (let y = 0; y < SIZE; y++) grid[y][x] = 0;
+    return {rows:fullRows, cols:fullCols, total:fullRows.length + fullCols.length};
+  }
+  class Game {
+    constructor(rng = Math.random) {
+      this.rng = rng;
+      this.highScore = 0;
+      this.restart();
+    }
+    makePiece() {
+      const source = SHAPES[Math.floor(this.rng() * SHAPES.length) % SHAPES.length];
+      return {cells:source.map(p => p.slice()), color: 1 + (Math.floor(this.rng()*COLORS.length)%COLORS.length)};
+    }
+    restart() {
+      this.grid = Array.from({length:SIZE},()=> Array(SIZE).fill(0));
+      this.tray = [this.makePiece(),this.makePiece(),this.makePiece()];
+      this.score = 0; this.combo = 0; this.moves = 0; this.level = 1;
+      this.gameOver = false; this.previous = null; this.rescueCount = 0; this.rescued = false;
+    }
+    snapshot() {
+      return {grid:this.grid.map(row=>row.slice()),tray:this.tray.map(p=>p ? {cells:p.cells.map(pt=>pt.slice()),color:p.color} : null),
+        score:this.score,combo:this.combo,moves:this.moves,level:this.level,gameOver:this.gameOver,rescued:this.rescued,rescueCount:this.rescueCount};
+    }
+    restore(data) {
+      if (!data || !Array.isArray(data.grid) || data.grid.length!==SIZE || !data.grid.every(row=>Array.isArray(row)&&row.length===SIZE)) return false;
+      if (!Array.isArray(data.tray) || data.tray.length!==3) return false;
+      this.grid = data.grid.map(row=>row.map(c=>Number.isInteger(c)&&c>=0&&c<=COLORS.length?c:0));
+      this.tray = data.tray.map(p=>p&&Array.isArray(p.cells)&&p.cells.length&&p.cells.every(pt=>Array.isArray(pt)&&pt.length===2&&pt.every(Number.isInteger))
+        ? {cells:normalized(p.cells),color:Number.isInteger(p.color)&&p.color>=1&&p.color<=COLORS.length?p.color:1}:null);
+      this.score = Math.max(0,Number(data.score)||0);
+      this.combo = Math.max(0,Number(data.combo)||0);
+      this.moves = Math.max(0,Number(data.moves)||0);
+      this.level = 1 + Math.floor(this.score/1000);
+      this.gameOver = !!data.gameOver; this.rescueCount = Number.isInteger(data.rescueCount) ? Math.min(2,Math.max(0,data.rescueCount)) : (data.rescued ? 1 : 0); this.rescued = this.rescueCount > 0;
+      this.previous = null;
+      return true;
+    }
+    move(index,x,y) {
+      if (this.gameOver || !Number.isInteger(x) || !Number.isInteger(y) || !Number.isInteger(index) || index<0 || index>2 || !this.tray[index] || !canPlace(this.grid,this.tray[index].cells,x,y))
+        return {success:false};
+      this.previous = this.snapshot();
+      const piece = this.tray[index];
+      for (const [dx,dy] of piece.cells) this.grid[y+dy][x+dx] = piece.color;
+      const cleared = clearCompleteLines(this.grid);
+      this.combo = cleared.total ? this.combo + 1 : 0;
+      const gained = piece.cells.length*10 + cleared.total*120*(1+Math.floor((cleared.total-1)/2)) + (cleared.total ? (this.combo-1)*40 : 0);
+      this.score += gained;
+      this.highScore = Math.max(this.highScore,this.score);
+      this.moves++;
+      this.level = 1 + Math.floor(this.score/1000);
+      this.tray[index] = null;
+      let refreshed = false;
+      if (this.tray.every(p=>p===null)) {
+        this.tray = [this.makePiece(),this.makePiece(),this.makePiece()]; refreshed = true;
+      }
+      this.gameOver = !this.tray.some(p=>findFit(this.grid,p,true));
+      return {success:true,points:gained,cleared,refreshed,gameOver:this.gameOver,rescued:this.rescued,rescueCount:this.rescueCount};
+    }
+    rotate(index) {
+      if(this.gameOver || !Number.isInteger(index)||index<0||index>2||!this.tray[index]) return false;
+      this.tray[index].cells = rotate(this.tray[index].cells);
+      return true;
+    }
+    // Dive Again: max two continue actions per round, guaranteed recovery even if board full.
+    rescue() {
+      if (!this.gameOver || this.rescueCount >= 2) return false;
+      this.rescueCount += 1; this.rescued = true; this.gameOver = false;
+      // Make at least one valid home for a single-cell piece.
+      for (let y = 3; y <= 5; y++) for (let x = 3; x <= 5; x++) this.grid[y][x] = 0;
+      this.tray = [this.makePiece(), this.makePiece(), this.makePiece()];
+      this.tray[0] = {cells:[[0,0]], color:1};
+      this.previous = null;
+      return true;
+    }
+    blast(x = 4, y = 4) {
+      if (this.gameOver || !Number.isInteger(x) || !Number.isInteger(y) || x < 0 || y < 0 || x >= SIZE || y >= SIZE) return 0;
+      let removed = 0;
+      for (let row = Math.max(0,y-1); row <= Math.min(SIZE-1,y+1); row++)
+        for (let col = Math.max(0,x-1); col <= Math.min(SIZE-1,x+1); col++) {
+          if (this.grid[row][col]) { this.grid[row][col] = 0; removed++; }
+        }
+      if (removed) this.previous = null;
+      return removed;
+    }
+    shuffle() {
+      if (this.gameOver || !this.tray.some(Boolean)) return false;
+      this.tray = this.tray.map(p => p ? this.makePiece() : null);
+      // Make shuffle useful on tight boards without granting an impossible piece.
+      if (!this.tray.some(p => p && findFit(this.grid,p,true))) {
+        const slot = this.tray.findIndex(Boolean);
+        if (slot !== -1 && this.grid.some(row => row.some(c => !c))) this.tray[slot] = {cells:[[0,0]],color:1};
+      }
+      this.previous = null;
+      return true;
+    }
+    undo() {
+      if(!this.previous) return false;
+      const data=this.previous;
+      this.restore(data);
+      return true;
+    }
+  }
+  return {Game,SIZE,SHAPES,COLORS,rotate,canPlace,findFit,clearCompleteLines,width,height,allRotations};
+});
+
+</script><script>
+/* SharkStack economy v3 — disclosed, fixed-price, non-random. Works offline. */
+(function (root, factory) {
+  const exported = factory();
+  if (typeof module === 'object' && module.exports) module.exports = exported;
+  else root.SharkEconomy = exported;
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+  const RULES = Object.freeze({
+    startingPearls: 25,
+    pearlsPerLine: 2,
+    comboPearls: 3,
+    questLines: 15,
+    questPearls: 25,
+    dailyPearls: 12,
+    rewardedAdPearls: 25,
+    maxPearlAdsPerDay: 3,
+    rescuePrice: 45,
+    undoPrice: 3,
+    freeRotationsPerLevel: 4,
+    rotationAdGrant: 3,
+    rotationPearlPrice: 8,
+    maxUtilityAdsPerDay: 6,
+    shufflePrice: 18,
+    blastPrice: 35,
+    maxRescuesPerRound: 2,
+  });
+  const PACKS = Object.freeze([
+    Object.freeze({sku:'shark_pearls_120', pearls:120, suggestedUsd:0.99}),
+    Object.freeze({sku:'shark_pearls_400', pearls:400, suggestedUsd:2.99}),
+    Object.freeze({sku:'shark_pearls_750', pearls:750, suggestedUsd:4.99}),
+  ]);
+  function awardForClear(lines, lifetimeLinesBefore) {
+    if (!Number.isSafeInteger(lines) || lines < 0 || !Number.isSafeInteger(lifetimeLinesBefore) || lifetimeLinesBefore < 0) throw Error('Invalid line count');
+    const oldQuests = Math.floor(lifetimeLinesBefore / RULES.questLines);
+    const newQuests = Math.floor((lifetimeLinesBefore + lines) / RULES.questLines);
+    const questCount = newQuests - oldQuests;
+    return {pearls: lines*RULES.pearlsPerLine + (lines >= 2 ? RULES.comboPearls : 0) + questCount*RULES.questPearls, quests:questCount};
+  }
+  function spend(balance, price) {
+    if (!Number.isSafeInteger(balance) || balance < 0 || !Number.isSafeInteger(price) || price <= 0) return null;
+    return balance >= price ? balance - price : null;
+  }
+  function canClaimPearlAd(used, day) {
+    return !used || used.day !== day || used.count < RULES.maxPearlAdsPerDay;
+  }
+  function afterPearlAd(used, day) {
+    if (!canClaimPearlAd(used, day)) return null;
+    return {day, count: (used && used.day === day ? used.count : 0) + 1};
+  }
+  function freeRotationsRemaining(used, bonus = 0) {
+    if (!Number.isSafeInteger(used) || used < 0 || !Number.isSafeInteger(bonus) || bonus < 0) return 0;
+    return Math.max(0, RULES.freeRotationsPerLevel + bonus - used);
+  }
+  function afterUtilityAd(used, day) {
+    if (!canUseUtilityAd(used, day)) return null;
+    return {day, count:(used && used.day === day ? used.count : 0) + 1};
+  }
+  function canUseUtilityAd(used, day) {
+    return !used || used.day !== day || used.count < RULES.maxUtilityAdsPerDay;
+  }
+  // Contextual *gameplay* suggestion, never a dynamic price/paywall/odds adjustment.
+  function nextSuggestedPowerup({gameOver, occupiedCells, pearls, rescueCount} = {}) {
+    if (gameOver && rescueCount < RULES.maxRescuesPerRound && pearls >= RULES.rescuePrice) return 'rescue';
+    if (occupiedCells >= 40 && pearls >= RULES.blastPrice) return 'blast';
+    if (occupiedCells >= 30 && pearls >= RULES.shufflePrice) return 'shuffle';
+    return 'play';
+  }
+  // Revenues never control level difficulty, prices, or shape randomness.
+  return {RULES, PACKS, awardForClear, spend, canClaimPearlAd, afterPearlAd, canUseUtilityAd, afterUtilityAd, freeRotationsRemaining, nextSuggestedPowerup};
+});
+
+</script><script>
+/* A conservative revenue/retention policy. Interstitials only after a completed round.
+ * Never changes shapes, difficulty, shop prices or rewarded-video grants.
+ */
+(function (root, factory) {
+  const policy = factory();
+  if (typeof module === 'object' && module.exports) module.exports = policy;
+  else root.SharkAdPolicy = policy;
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+  const RULES = Object.freeze({
+    minCompletedRounds: 2, // Warm up: no interstitial during the first round
+    minSessionMs: 120000,   // Two minutes before first interstitial
+    minGapMs: 180000,       // At least three minutes between fullscreen ads
+    minMovesPerRound: 5,    // Don't monetize accidental/instant restarts
+    minRoundsSinceAd: 2,   // Never show on consecutive rounds
+    maxPerSession: 3,       // Conservative cap; rewarded ads are separate
+    chance: 0.45           // Random eligibility; lower is safer for retention
+  });
+  function eligible(state, now, randomValue) {
+    if (!state || !Number.isFinite(now) || !Number.isFinite(randomValue) || randomValue < 0 || randomValue >= 1) return false;
+    return Number(state.roundsCompleted) >= RULES.minCompletedRounds &&
+      Number(state.roundsSinceAd) >= RULES.minRoundsSinceAd &&
+      Number(state.sessionShown) < RULES.maxPerSession &&
+      now - Number(state.sessionStartedAt) >= RULES.minSessionMs &&
+      (!Number(state.lastInterstitialAt) || now - Number(state.lastInterstitialAt) >= RULES.minGapMs) &&
+      randomValue < RULES.chance;
+  }
+  function recordRound(state, moves) {
+    if (!state) return false;
+    if (!Number.isFinite(moves) || moves < RULES.minMovesPerRound) return false;
+    state.roundsCompleted = Math.max(0, Number(state.roundsCompleted) || 0) + 1;
+    state.roundsSinceAd = Math.max(0, Number(state.roundsSinceAd) || 0) + 1;
+    return true;
+  }
+  function recordShown(state, now) {
+    state.lastInterstitialAt = now;
+    state.roundsSinceAd = 0;
+    state.sessionShown = Math.max(0, Number(state.sessionShown) || 0) + 1;
+  }
+  return {RULES, eligible, recordRound, recordShown};
+});
+</script><script>
+/* Shark Crew: privacy-first, offline friend code exchange and score sharing.
+ * NOTE: Local codes do not verify installs, genuine users or account ownership.
+ * Never use local credits as proof of a verified signup or for real-world prizes.
+ */
+(function(root,factory){
+  const api=factory();
+  if(typeof module==='object' && module.exports) module.exports=api;
+  else root.SharkCrew=api;
+})(typeof self!=='undefined'?self:this,function(){
+  'use strict';
+  const RULES=Object.freeze({welcomePearls:15,invitePearls:20,maxDailyClaims:2,maxLifetimeClaims:10});
+  const codePattern=/^SS-[A-F0-9]{8}$/;
+  const receiptPattern=/^SJ-([A-F0-9]{8})-([A-F0-9]{8})$/;
+  function normalizeCode(s){return String(s||'').trim().toUpperCase().replace(/\s+/g,'');}
+  function isCode(s){return codePattern.test(normalizeCode(s));}
+  function cleanName(s){return String(s||'').trim().replace(/[\r\n\t]/g,' ').replace(/[<>]/g,'').slice(0,18)||'Captain';}
+  function makeState(code,stored){if(!isCode(code))throw Error('Invalid code');const old=stored&&typeof stored==='object'?stored:{};return {
+    code:normalizeCode(code), nickname:cleanName(old.nickname), referredBy:isCode(old.referredBy)?normalizeCode(old.referredBy):null,
+    joinReceipt:typeof old.joinReceipt==='string'&&receiptPattern.test(old.joinReceipt)?old.joinReceipt:null,
+    redeemed:Array.isArray(old.redeemed)?old.redeemed.filter(s=>/^[A-F0-9]{8}$/.test(s)).slice(0,RULES.maxLifetimeClaims):[],
+    claimDay:typeof old.claimDay==='string'?old.claimDay:'',claimedToday:Math.max(0,Number(old.claimedToday)||0)
+  };}
+  function join(state,rawCode){const code=normalizeCode(rawCode);
+    if(!isCode(code))return {error:'Enter a valid code (SS- followed by 8 characters).'};
+    if(code===state.code)return {error:'You cannot join your own crew.'};
+    if(state.referredBy)return {error:'A friend code was already used on this game install.'};
+    return {state:{...state,referredBy:code,joinReceipt:`SJ-${code.slice(3)}-${state.code.slice(3)}`},pearls:RULES.welcomePearls};
+  }
+  function redeem(state,rawReceipt,day){const code=normalizeCode(rawReceipt),match=receiptPattern.exec(code);
+    if(!match)return {error:'Enter a confirmation beginning SJ- (the friend sends this after joining).'};
+    const own=state.code.slice(3), [_,inviter,friend]=match;
+    if(inviter!==own)return {error:'This confirmation is for a different captain.'};
+    if(friend===own)return {error:'You cannot claim your own confirmation.'};
+    if(state.redeemed.includes(friend))return {error:'This friend has already received a reward credit.'};
+    if(state.redeemed.length>=RULES.maxLifetimeClaims)return {error:'You have reached the 10-friend offline bonus limit.'};
+    const todayCount=state.claimDay===day?state.claimedToday:0;
+    if(todayCount>=RULES.maxDailyClaims)return {error:'Today’s two crew bonuses are used. Try tomorrow.'};
+    return {state:{...state,redeemed:[...state.redeemed,friend],claimDay:day,claimedToday:todayCount+1},pearls:RULES.invitePearls};
+  }
+  function scoreText(state,score,best){const n=cleanName(state.nickname);return `🦈 ${n} just scored ${Math.max(0,Math.floor(Number(score)||0)).toLocaleString('en-US')} in SharkStack Splash! Best: ${Math.max(0,Math.floor(Number(best)||0)).toLocaleString('en-US')}. Can you beat me? 🎮\nPlay free: https://play.google.com/store/apps/details?id=com.sharkstacksplash.game`}
+  function inviteText(state){return `🦈 Join ${cleanName(state.nickname)}'s Shark Crew in SharkStack Splash! Stack blocks, beat my score, and start with a 15-pearl welcome gift. 🎮\nFriend code: ${state.code}\nInstall: https://play.google.com/store/apps/details?id=com.sharkstacksplash.game\nOpen 👥 Crew in the game and enter my code. Share your confirmation back so I can claim a crew bonus, too!`}
+  return {RULES,normalizeCode,isCode,cleanName,makeState,join,redeem,scoreText,inviteText};
+});
+</script><script>
+/* PUBLIC configuration ONLY: Set up a dedicated free-tier Supabase project to enable verified Shark Crew.
+ * Never put a Supabase secret/service_role key here.
+ * Empty values keep the offline game available without online login.
+ */
+window.SharkCrewCloudConfig = {
+  url: '',
+  publishableKey: ''
+};
+
+</script><script>
+/* Optional Shark Crew cloud account: email one-time code + secure RPC. No service keys. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.SharkCrewOnline=api;})(typeof self!=='undefined'?self:this,function(){
+ 'use strict';
+ const SESSION_KEY='sharkstack.cloud.session.v1';
+ function normalize(cfg){
+   const url=String(cfg?.url||'').replace(/\/$/,'');
+   const key=String(cfg?.publishableKey||'');
+   return /^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(url)&&/^(sb_publishable_|eyJ)/.test(key)?{url,key}:null;
+ }
+ function make(config, storage, transport){
+   const cfg=normalize(config);
+   const store=storage||((typeof localStorage!=='undefined')?localStorage:null);
+   const fetcher=transport||((typeof fetch!=='undefined')?fetch.bind(globalThis):null);
+   let session=null;
+   try{session=JSON.parse(store?.getItem(SESSION_KEY)||'null')}catch(_){}
+   function requireReady(){if(!cfg)throw Error('Cloud accounts are not configured for this release');if(!fetcher)throw Error('Network unavailable');}
+   async function request(path,body,authorized){
+     requireReady();
+     if(authorized){
+       if(!session?.access_token)throw Error('Please sign in to your Shark Crew account');
+       if(Number(session.expires_at||0)*1000 <= Date.now()+60000) await refresh();
+     }
+     const headers={'apikey':cfg.key,'Content-Type':'application/json'};
+     if(authorized) headers.Authorization='Bearer '+session.access_token;
+     const res=await fetcher(cfg.url+path,{method:'POST',headers,body:JSON.stringify(body||{})});
+     const data=await res.json().catch(()=>({}));
+     if(!res.ok)throw Error(String(data?.msg||data?.error_description||data?.message||data?.error||'Network request failed').slice(0,180));
+     return data;
+   }
+   function save(value){session=value;if(store){if(value)store.setItem(SESSION_KEY,JSON.stringify(value));else store.removeItem(SESSION_KEY);}}
+   function setTokens(value){
+     if(!value?.access_token||!value?.refresh_token)throw Error('The email code was not verified');
+     save({access_token:value.access_token,refresh_token:value.refresh_token,expires_at:Math.floor(Date.now()/1000)+Math.max(60,Number(value.expires_in)||3600)});
+   }
+   async function refresh(){
+     if(!session?.refresh_token)throw Error('Session expired: please sign in again');
+     const data=await request('/auth/v1/token?grant_type=refresh_token',{refresh_token:session.refresh_token},false);
+     setTokens(data);return true;
+   }
+   async function requestCode(email){
+     const cleaned=String(email||'').trim().toLowerCase();
+     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleaned)||cleaned.length>254)throw Error('Enter a valid email address');
+     await request('/auth/v1/otp',{email:cleaned,create_user:true},false);
+     return cleaned;
+   }
+   async function verifyCode(email,code){
+     const token=String(code||'').trim();
+     if(!/^\d{6,8}$/.test(token))throw Error('Enter the email verification code');
+     const data=await request('/auth/v1/verify',{email:String(email).trim().toLowerCase(),token,type:'email'},false);
+     setTokens(data);return true;
+   }
+   async function profile(name){return request('/rest/v1/rpc/sharkcrew_register',{p_nickname:String(name||'Captain').slice(0,18)},true);}
+   async function join(code){return request('/rest/v1/rpc/sharkcrew_join',{p_friend_code:String(code||'').trim().toUpperCase()},true);}
+   async function pending(){return request('/rest/v1/rpc/sharkcrew_pending',{},true);}
+   async function ack(id){return request('/rest/v1/rpc/sharkcrew_ack',{p_reward_id:String(id)},true);}
+   async function deleteAccount(){const result=await request('/rest/v1/rpc/sharkcrew_delete_account',{},true);if(result!==true)throw Error('Account deletion was not confirmed');signOut();return true;}
+   function signOut(){save(null);}
+   return {available:!!cfg,isSignedIn:()=>!!session?.access_token,requestCode,verifyCode,profile,join,pending,ack,deleteAccount,signOut,refresh};
+ }
+ return {make,normalize};
+});
+
+</script><script>
+(() => {
+  'use strict';
+  const E = window.BlocksEngine, M = window.SharkEconomy, A = window.SharkAdPolicy, S = window.SharkCrew, CREW_KEY = 'sharkstack.crew.v1', KEY = 'sharkstack.v3', $ = id => document.getElementById(id);
+  const game = new E.Game(); let selected = 0, pearls = M.RULES.startingPearls, clears = 0, sounds = true, touchStart = null, lastClaim = '', adUsed = null, rescueAdUsed = false, lastMoveReward = 0, lastMoveLines = 0, processedReceipts = [], catalog = {}; 
+  let toastTimer, preview = null, dragging = null, roundReported = false, pendingNewGame = false;
+  const pacing = {roundsCompleted:0, roundsSinceAd:0, sessionShown:0, sessionStartedAt:Date.now(), lastInterstitialAt:0};
+  const isAndroid = !!(window.SharkAds && typeof window.SharkAds.requestRewardedRescue === 'function' && window.SharkAds.adsEnabled());
+  const billing = window.SharkBilling && typeof window.SharkBilling.buy === 'function' ? window.SharkBilling : null;
+  function newCrewId(){
+    const bytes=new Uint8Array(4);
+    if(window.crypto && typeof window.crypto.getRandomValues==='function')window.crypto.getRandomValues(bytes);
+    else for(let i=0;i<bytes.length;i++)bytes[i]=Math.floor(Math.random()*256);
+    return 'SS-'+Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+  }
+  const priorCrew=(()=>{try{return JSON.parse(localStorage.getItem(CREW_KEY)||'null')}catch(e){return null}})();
+  let crew=S.makeState(S.isCode(priorCrew?.code)?priorCrew.code:newCrewId(),priorCrew);
+  function saveCrew(){try{localStorage.setItem(CREW_KEY,JSON.stringify(crew))}catch(e){}}
+  saveCrew();
+  const saved = (() => { try { return JSON.parse(localStorage.getItem(KEY)||localStorage.getItem('sharkstack.v2')||localStorage.getItem('sharkstack.v1')||'{}'); } catch(e){ return {}; } })();
+  if (Number.isFinite(saved.best)) game.highScore = Math.max(0,saved.best);
+  if (Number.isFinite(saved.pearls)) pearls = Math.max(0,saved.pearls);
+  if (Number.isFinite(saved.clears)) clears = Math.max(0,saved.clears);
+  if (typeof saved.sounds === 'boolean') sounds = saved.sounds;
+  if (typeof saved.lastClaim === 'string') lastClaim = saved.lastClaim;
+  if (saved.adUsed && typeof saved.adUsed.day === 'string') adUsed = saved.adUsed;
+  rescueAdUsed = !!saved.rescueAdUsed;
+  roundReported = !!saved.roundReported;
+  if (saved.adPacing && typeof saved.adPacing === 'object') {
+    pacing.roundsCompleted = Math.max(0, Number(saved.adPacing.roundsCompleted)||0);
+    pacing.roundsSinceAd = Math.max(0, Number(saved.adPacing.roundsSinceAd)||0);
+    pacing.lastInterstitialAt = Math.max(0, Number(saved.adPacing.lastInterstitialAt)||0);
+  }
+  processedReceipts = Array.isArray(saved.processedReceipts) ? saved.processedReceipts.slice(-500) : [];
+  if (saved.state) { try { game.restore(saved.state); } catch(e) { game.restart(); } }
+  const cellElements = [];
+  const board = $('board');
+  for(let y=0;y<E.SIZE;y++) for(let x=0;x<E.SIZE;x++) {
+    const c=document.createElement('button');c.type='button';c.className='cell';c.dataset.x=x;c.dataset.y=y;c.setAttribute('role','gridcell');c.setAttribute('aria-label',`Row ${y+1} column ${x+1}`);board.appendChild(c);cellElements.push(c);
+    c.addEventListener('click',()=>{if(dragging)return;attempt(x,y);});
+    c.addEventListener('mouseenter',()=>{if(!dragging) showPreview(x,y);});
+    c.addEventListener('focus',()=>showPreview(x,y));
+  }
+  board.addEventListener('mouseleave',()=>{if(!dragging){preview=null;renderBoard();}});
+  function save(){try{localStorage.setItem(KEY,JSON.stringify({best:game.highScore,pearls,clears,sounds,lastClaim,adUsed,rescueAdUsed,roundReported,adPacing:{roundsCompleted:pacing.roundsCompleted,roundsSinceAd:pacing.roundsSinceAd,lastInterstitialAt:pacing.lastInterstitialAt},processedReceipts,state:game.snapshot()}));return true;}catch(e){return false;}}
+  function toast(msg){$('toast').textContent=msg;$('toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),2100);}
+  function audio(){if(!sounds)return;try{const AC=window.AudioContext||window.webkitAudioContext;const ctx=new AC();const osc=ctx.createOscillator(),gain=ctx.createGain();osc.frequency.setValueAtTime(440,ctx.currentTime);osc.frequency.exponentialRampToValueAtTime(660,ctx.currentTime+.08);gain.gain.setValueAtTime(.035,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.13);osc.connect(gain).connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.14);osc.onended=()=>ctx.close();}catch(e){}}
+  function mini(piece){const wrap=document.createElement('div');wrap.className='mini-grid';if(!piece)return wrap;const w=E.width(piece.cells),h=E.height(piece.cells);wrap.style.gridTemplateColumns=`repeat(${w},min(16px,4.2vw))`;wrap.style.gridTemplateRows=`repeat(${h},min(16px,4.2vw))`;
+    for(let j=0;j<h;j++)for(let i=0;i<w;i++){const s=document.createElement('span');s.className='mini-cell';if(piece.cells.some(([x,y])=>x===i&&y===j)){s.classList.add('filled');s.style.setProperty('--block',E.COLORS[piece.color-1]);}wrap.appendChild(s);}return wrap;}
+  function currentPiece(){return game.tray[selected] || null;}
+  function ensureSelection(){if(!currentPiece())selected=game.tray.findIndex(p=>p!==null);}
+  function renderBoard(){const p=currentPiece();let valid=null;
+    if(preview&&p)valid=E.canPlace(game.grid,p.cells,preview.x,preview.y);
+    for(let y=0;y<8;y++)for(let x=0;x<8;x++){const c=cellElements[y*8+x],v=game.grid[y][x];c.className='cell'+(v?' filled':'');c.style.setProperty('--block',v?E.COLORS[v-1]:'transparent');
+      if(preview&&p&&p.cells.some(([dx,dy])=>x===preview.x+dx&&y===preview.y+dy))c.classList.add(valid?'preview':'invalid');
+    }
+  }
+  function renderTray(){ensureSelection();const tray=$('tray');tray.innerHTML='';game.tray.forEach((p,i)=>{const btn=document.createElement('button');btn.className='piece-card'+(i===selected?' selected':'')+(!p?' empty':'');btn.type='button';btn.setAttribute('aria-label',p?`Tap to rotate shape ${i+1}, then tap grid or drag to place`:`Shape ${i+1} used`);btn.appendChild(mini(p));const tag=document.createElement('small');tag.className='tag';tag.textContent=p?`#${i+1}`:'USED';btn.appendChild(tag);btn.disabled=!p;
+    btn.addEventListener('click',()=>{if(dragging || game.gameOver)return;selected=i;const didRotate=game.rotate(i);preview=null;render();if(didRotate)toast('↻ Rotated! Tap again to rotate 90° more');});
+    btn.addEventListener('pointerdown',e=>{if(!p||e.button!==0)return;touchStart={id:e.pointerId,index:i,startX:e.clientX,startY:e.clientY};});
+    tray.appendChild(btn);
+  });}
+  function render(){renderBoard();renderTray();$('score').textContent=game.score.toLocaleString();$('best').textContent=game.highScore.toLocaleString();$('level').textContent=game.level;$('pearls').textContent=pearls;$('quest').textContent=`${clears%M.RULES.questLines} / ${M.RULES.questLines}`; $('questProgress').style.width=`${(clears%M.RULES.questLines)/M.RULES.questLines*100}%`; $('dailyBtn').classList.toggle('attention',lastClaim!==today());$('rotateBtn').disabled=!currentPiece()||game.gameOver;$('undoBtn').disabled=pearls < M.RULES.undoPrice + lastMoveReward || !game.previous || game.gameOver;save();}
+  function message(t){$('message').textContent=t;}
+  function popup(text){const el=$('scorePopup');el.textContent=text;el.classList.remove('show');void el.offsetWidth;el.classList.add('show');}
+  function showPreview(x,y){preview={x,y};renderBoard();}
+  function attempt(x,y){ensureSelection();if(game.gameOver)return;if(selected<0){toast('No blocks available!');return;}const result=game.move(selected,x,y);if(!result.success){toast('That block won’t fit there');return;}
+    audio();if(navigator.vibrate)navigator.vibrate(15);preview=null;
+    lastMoveLines=result.cleared.total; const earned=M.awardForClear(lastMoveLines,clears);lastMoveReward=earned.pearls;pearls+=earned.pearls;clears+=lastMoveLines;
+    if(result.cleared.total){if(earned.quests)toast(`🎉 Ocean Quest complete! +${earned.quests*M.RULES.questPearls} pearls`);splash();message(`🌊 SPLASH! ${result.cleared.total} line${result.cleared.total>1?'s':''} cleared!`);popup(`+${result.points} · +${earned.pearls} 💎`);}else{message('🦈 Keep stacking to feed the shark!');}
+    if(result.refreshed)message('🫧 Fresh blocks have surfaced!');
+    render();if(result.gameOver)setTimeout(showGameOver,330);
+  }
+  function setModal(title,body,actions,icon='🦈'){$('modalTitle').textContent=title;$('modalText').textContent=body;$('modalIcon').textContent=icon;const b=$('modalActions');b.innerHTML='';actions.forEach(({label,onClick,secondary})=>{const btn=document.createElement('button');btn.textContent=label;btn.className=secondary?'secondary':'primary';btn.onclick=onClick;b.appendChild(btn);});$('modal').classList.remove('hidden');}
+  function closeModal(){$('modal').classList.add('hidden');}
+  // There is no paywall: starting fresh is always unlimited and free.
+  function diveForPearls(){
+    if (pearls < M.RULES.rescuePrice) {toast('Not enough pearls. Every new game is free!');return;}
+    if (game.rescue()){pearls-=M.RULES.rescuePrice;lastMoveReward=0;closeModal();render();splash();toast('🦈 Dive Again! Your shark lives on.');}
+  }
+  function requestDiveAd(){
+    if (rescueAdUsed || game.rescueCount >= M.RULES.maxRescuesPerRound)return;
+    if(isAndroid){window.SharkAds.requestRewardedRescue();toast('Opening optional rewarded video…');}
+    else window.sharkRewardGranted(); // Web demo: one free continue.
+  }
+  function showGameOver(){if(!game.gameOver)return;
+    if(!roundReported){ A.recordRound(pacing,game.moves); roundReported=true;save(); }
+    const opts=[];
+    if(game.rescueCount < M.RULES.maxRescuesPerRound){
+      if(pearls >= M.RULES.rescuePrice) opts.push({label:`🦈 Dive Again · ${M.RULES.rescuePrice} 💎`,onClick:diveForPearls});
+      if(!rescueAdUsed)opts.push({label:isAndroid?'▶ Watch optional video · Dive Again':'🎁 One free Dive Again (web)',onClick:requestDiveAd,secondary:true});
+      if(pearls < M.RULES.rescuePrice)opts.push({label:'💎 Open pearl shop',onClick:shop,secondary:true});
+    }
+    opts.push({label:'🏆 Share my score',onClick:shareScore,secondary:true});
+    opts.push({label:'👥 Invite friends · earn pearls',onClick:showCrew,secondary:true});
+    opts.push({label:'Start next round · FREE',onClick:continueAfterScore,secondary:true});
+    setModal('Shark attack! 🦈',`Score ${game.score.toLocaleString()} · best ${game.highScore.toLocaleString()}. Dive Again opens space and fresh shapes (${game.rescueCount}/${M.RULES.maxRescuesPerRound} used). New games are always free!`,opts,'🌊');
+  }
+  window.sharkRewardGranted=()=>{if(rescueAdUsed)return; if(game.rescue()){rescueAdUsed=true;closeModal();toast('🦈 Free Dive Again activated!');message('🌊 Second chance — make it count!');render();}else toast('No Dive Again available.');};
+  window.sharkAdUnavailable=()=>toast('Video unavailable right now. You can play for free.');
+  window.sharkCoinsGranted=()=>{
+    const next=M.afterPearlAd(adUsed,today());if(!next){toast('Daily video reward limit reached.');return;}
+    adUsed=next;pearls+=M.RULES.rewardedAdPearls;render();toast(`💎 +${M.RULES.rewardedAdPearls} pearls for the optional video!`);splash();
+  };
+  // The Android layer sends only localized prices fetched from Google Play; no invented price tags.
+  window.sharkCatalogReady=(json)=>{try{const value=typeof json==='string'?JSON.parse(json):json;if(value && typeof value==='object'){catalog=value;if(!$('modal').classList.contains('hidden')&&$('modalTitle').textContent==='Shark Treasure Shop')shop();}}catch(e){}};
+  window.sharkPurchaseGranted=(sku,receiptId)=>{
+    const pack=M.PACKS.find(p=>p.sku===sku);
+    if(!pack || !/^[a-f0-9]{64}$/.test(receiptId))return;
+    if(!processedReceipts.includes(receiptId)){
+      processedReceipts.push(receiptId);processedReceipts=processedReceipts.slice(-500);
+      pearls+=pack.pearls;render();if(!$('modal').classList.contains('hidden')&&$('modalTitle').textContent==='Shark Treasure Shop')shop();splash();toast(`🎉 Purchase delivered: +${pack.pearls} pearls!`);
+    }
+    if(billing && save())billing.ackDelivery(receiptId); // Persist before acknowledging native delivery.
+  };
+  window.sharkBillingError=(message)=>toast(String(message||'Google Play purchases unavailable').slice(0,110));
+  function today(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
+  function splash(){const frame=document.querySelector('.board-frame');frame.classList.remove('splash');void frame.offsetWidth;frame.classList.add('splash');const r=frame.getBoundingClientRect();for(let i=0;i<13;i++){const c=document.createElement('span');c.className='confetti';c.style.left=(r.left+r.width*(.1+Math.random()*.8))+'px';c.style.top=(r.top+Math.random()*r.height*.65)+'px';c.style.background=['#ffdd80','#63f2db','#67baff','#ff8fbd'][i%4];c.style.animationDelay=(Math.random()*.25)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),1250);}}
+  function claimDaily(){if(lastClaim===today()){toast('Treasure already claimed today.');return;}lastClaim=today();pearls+=M.RULES.dailyPearls;render();closeModal();splash();toast(`🎁 Daily Treasure! +${M.RULES.dailyPearls} pearls`);}
+  function shop(){const acts=[
+    {label:`🎲 Fresh shape shuffle · ${M.RULES.shufflePrice} 💎`,onClick:()=>{if(game.gameOver){toast('Use Dive Again or start a new free round.');return;}const next=M.spend(pearls,M.RULES.shufflePrice);if(next===null){toast('Not enough pearls — keep clearing lines!');return;}if(game.shuffle()){pearls=next;closeModal();render();toast('🎲 New shapes delivered!');}}},
+    {label:`💥 Blast center 3×3 · ${M.RULES.blastPrice} 💎`,onClick:()=>{if(game.gameOver){toast('Use Dive Again or start a new free round.');return;}const next=M.spend(pearls,M.RULES.blastPrice);if(next===null){toast('Earn more pearls first!');return;}if(!game.grid.slice(3,6).some(row=>row.slice(3,6).some(Boolean))){toast('Center is empty. No pearls spent.');return;}const removed=game.blast(4,4);if(removed){pearls=next;closeModal();render();splash();toast(`💥 Cleared ${removed} blocks!`);}}},
+    {label:lastClaim!==today()?`🎁 Free daily treasure · +${M.RULES.dailyPearls} 💎`:'🎁 Daily treasure collected ✓',onClick:claimDaily,secondary:true}
+  ];
+  if(isAndroid && M.canClaimPearlAd(adUsed,today()))acts.push({label:`▶ Optional video · +${M.RULES.rewardedAdPearls} 💎 (${M.RULES.maxPearlAdsPerDay-(adUsed?.day===today()?adUsed.count:0)} left today)`,onClick:()=>{window.SharkAds.requestRewardedCoins();toast('Opening optional rewarded video…');},secondary:true});
+  if(game.gameOver&&game.rescueCount<M.RULES.maxRescuesPerRound)acts.push({label:`🦈 Dive Again · ${M.RULES.rescuePrice} 💎`,onClick:diveForPearls});
+  const occupied=game.grid.flat().filter(Boolean).length;
+  const tip={rescue:'Tip: Dive Again gets you fresh shapes.',blast:'Tip: Your reef is crowded; a blast can free 3×3 space.',shuffle:'Tip: A shape shuffle can help on a crowded reef.',play:'Tip: Keep stacking to earn free pearls.'}[M.nextSuggestedPowerup({gameOver:game.gameOver,occupiedCells:occupied,pearls,rescueCount:game.rescueCount})];
+  const packs=M.PACKS.filter(pack=>typeof catalog[pack.sku]==='string'&&catalog[pack.sku].length);
+  if(billing&&packs.length)for(const pack of packs)acts.push({label:`💎 ${pack.pearls} pearls · ${catalog[pack.sku]} (Google Play)`,onClick:()=>billing.buy(pack.sku)});
+  acts.push({label:'Back to the ocean',onClick:()=>{closeModal();if(game.gameOver)showGameOver();},secondary:true});
+  setModal('Shark Treasure Shop',`Balance: ${pearls} pearls. ${tip} Earn 2 per line + combo bonuses and ${M.RULES.questPearls} every ${M.RULES.questLines} lines. Paid packs are optional and use Google Play prices. Pearls have no cash value.`,acts,'🏝️');
+  }
+  // Optional verified online crew. Disabled unless the publisher configures a
+  // dedicated Supabase project. The core puzzle always stays usable offline.
+  const cloud=window.SharkCrewOnline?.make(window.SharkCrewCloudConfig||{});
+  let cloudCode='',cloudEmail='';
+  // Reuse the game's atomic save key so a credit and its receipt persist together.
+  function onlineInviteState(){return {...crew,code:(cloud?.isSignedIn()&&cloudCode)?cloudCode:crew.code};}
+  function onlineStatus(msg){$('cloudStatus').textContent=msg;toast(msg);}
+  function onlineUi(){
+    if(!cloud?.available)return;
+    $('cloudSection').classList.remove('hidden');
+    for(const section of document.querySelectorAll('#crewModal .crew-section:not(.cloud-section)'))section.classList.add('hidden');
+    const signed=cloud.isSignedIn();
+    $('cloudAuthPane').classList.toggle('hidden',signed);
+    $('cloudConnectedPane').classList.toggle('hidden',!signed);
+    $('cloudFriendCode').textContent=cloudCode||'Connecting…';
+    $('crewCode').textContent=signed&&cloudCode?cloudCode:'Sign in for a verified code';
+    $('crewStatus').textContent=signed?'Server-verified friend rewards. One joining reward per account.':'Sign in for account-verified friend rewards.';
+  }
+  async function collectCloudRewards(){
+    if(!cloud?.isSignedIn())return;
+    const pending=await cloud.pending();
+    const list=Array.isArray(pending)?pending:[];
+    let total=0;
+    for(const award of list){
+      if(!/^[0-9a-f-]{36}$/i.test(String(award.id))||![15,20].includes(award.pearls))continue;
+      const receipt='cloud:'+award.id;
+      if(!processedReceipts.includes(receipt)){
+        pearls+=award.pearls;
+        processedReceipts.push(receipt);
+        if(!save()){
+          pearls-=award.pearls;processedReceipts.pop();
+          throw Error('Could not save the reward locally. Free space and try again.');
+        }
+        total+=award.pearls;
+      }
+      // Idempotent: only acknowledge after the local game and receipt are saved.
+      await cloud.ack(award.id);
+    }
+    if(total){render();splash();onlineStatus('🎁 +'+total+' verified Shark Pearls collected!');}
+    else onlineStatus('No new verified bonuses yet.');
+  }
+  async function onlineConnect(){
+    if(!cloud?.isSignedIn())return;
+    const profile=await cloud.profile(crew.nickname);
+    cloudCode=profile.friend_code;
+    onlineUi();
+    await collectCloudRewards();
+  }
+  if(cloud?.available){
+    $('cloudRequest').onclick=async()=>{
+      try{cloudEmail=await cloud.requestCode($('cloudEmail').value);onlineStatus('Check your email for your six-digit code.');}
+      catch(e){onlineStatus(e.message||'Cannot send code right now.');}
+    };
+    $('cloudVerify').onclick=async()=>{
+      try{
+        const email=cloudEmail||$('cloudEmail').value.trim().toLowerCase();
+        await cloud.verifyCode(email,$('cloudOtp').value);
+        onlineStatus('Email verified! Loading your Shark Crew…');
+        await onlineConnect();
+      }catch(e){onlineStatus(e.message||'Invalid or expired code.');}
+    };
+    $('cloudJoin').onclick=async()=>{
+      try{
+        const result=await cloud.join($('cloudJoinCode').value);
+        await collectCloudRewards();
+        onlineStatus(result.accepted?'Welcome aboard! Your bonus has been checked.':'No bonus available.');
+        $('cloudJoin').disabled=true;
+      }catch(e){onlineStatus(e.message||'Friend code not accepted.');}
+    };
+    $('cloudClaim').onclick=async()=>{try{await collectCloudRewards();}catch(e){onlineStatus(e.message||'Cannot check rewards right now.');}};
+    $('cloudDeleteAccount').onclick=async()=>{
+      if(!window.confirm('Permanently delete your Shark Crew online account and server referral history? This cannot be undone. Your offline game will remain.'))return;
+      if(!window.confirm('Confirm PERMANENT online account deletion. Your virtual online referral history will be erased.'))return;
+      try{
+        await cloud.deleteAccount();cloudCode='';cloudEmail='';
+        onlineUi();onlineStatus('Verified account deleted. Offline game is still available.');
+      }catch(e){onlineStatus(e.message||'Account deletion failed. Try again.');}
+    };
+    $('cloudLogout').onclick=()=>{
+      cloud.signOut();cloudCode='';cloudEmail='';onlineUi();onlineStatus('Signed out. You can keep playing offline.');
+    };
+    onlineUi();
+  }
+
+  // Shark Crew: share only with the player's explicit tap. Never auto-post or contact a social account.
+  function crewNotice(text){toast(text);$('crewStatus').textContent=text;}
+  function showCrew(){
+    closeModal();
+    if(cloud?.available){onlineUi();if(cloud.isSignedIn()&&!cloudCode)onlineConnect().catch(e=>onlineStatus(e.message));}
+    $('crewNickname').value=crew.nickname;
+    $('crewCode').textContent=cloud?.available?(cloudCode||'Sign in for a verified code'):crew.code;
+    $('crewReceipt').textContent=crew.joinReceipt||'';
+    $('crewReceiptArea').classList.toggle('hidden',!crew.joinReceipt);
+    $('joinCodeInput').disabled=!!crew.referredBy;
+    $('joinCrewBtn').disabled=!!crew.referredBy;
+    $('crewStatus').textContent=`Friend bonuses claimed: ${crew.redeemed.length}/${S.RULES.maxLifetimeClaims}. Unverified offline code exchange.`;
+    $('crewModal').classList.remove('hidden');
+  }
+  function closeCrew(){$('crewModal').classList.add('hidden');}
+  function applyNickname(){crew.nickname=S.cleanName($('crewNickname').value);$('crewNickname').value=crew.nickname;saveCrew();}
+  async function copyMessage(text){
+    if(window.SharkSocial && typeof window.SharkSocial.copyText==='function'){window.SharkSocial.copyText(text);toast('Copied — share with a friend!');return;}
+    try {if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(text);toast('Copied — share with a friend!');return;}}
+    catch(e){}
+    const temp=document.createElement('textarea');temp.value=text;temp.style.position='fixed';temp.style.opacity='0';document.body.appendChild(temp);temp.select();
+    const result=document.execCommand('copy');temp.remove();toast(result?'Copied invitation!':'Copy not available on this device.');
+  }
+  async function shareMessage(text){
+    applyNickname();
+    if(window.SharkSocial && typeof window.SharkSocial.shareText==='function'){
+      window.SharkSocial.shareText(text);return;
+    }
+    if(navigator.share){try{await navigator.share({text});return;}catch(e){if(e.name==='AbortError')return;}}
+    await copyMessage(text);
+  }
+  function shareScore(){applyNickname();shareMessage(S.scoreText(crew,game.score,game.highScore));}
+  function shareInvite(){applyNickname();if(cloud?.available&&!cloud.isSignedIn()){onlineStatus('Sign in for your verified invite code.');return;}shareMessage(S.inviteText(onlineInviteState()));}
+  $('crewBtn').onclick=showCrew;$('crewClose').onclick=closeCrew;$('crewDone').onclick=closeCrew;
+  $('crewNickname').addEventListener('change',applyNickname);
+  $('shareScoreBtn').onclick=shareScore;$('shareInviteBtn').onclick=shareInvite;
+  $('copyInviteBtn').onclick=()=>{applyNickname();if(cloud?.available&&!cloud.isSignedIn()){onlineStatus('Sign in for your verified invite code.');return;}copyMessage(S.inviteText(onlineInviteState()));};
+  $('joinCrewBtn').onclick=()=>{
+    if(cloud?.available){onlineStatus('Use verified account sign-in and the online Join crew button.');return;}
+    const result=S.join(crew,$('joinCodeInput').value);
+    if(result.error){crewNotice(result.error);return;}
+    crew=result.state;pearls+=result.pearls;saveCrew();render();showCrew();splash();crewNotice(`Welcome to Shark Crew! +${result.pearls} pearls. Send the confirmation to your friend.`);
+  };
+  $('claimCrewBtn').onclick=()=>{
+    if(cloud?.available){onlineStatus('Friend rewards are checked automatically by your verified account.');return;}
+    const result=S.redeem(crew,$('claimCodeInput').value,today());
+    if(result.error){crewNotice(result.error);return;}
+    crew=result.state;pearls+=result.pearls;saveCrew();render();$('claimCodeInput').value='';showCrew();crewNotice(`🦈 Crew reward! +${result.pearls} pearls for your friend's confirmation.`);
+  };
+  $('shareReceiptBtn').onclick=()=>{if(crew.joinReceipt)shareMessage(`🦈 I joined your Shark Crew! Here's my confirmation: ${crew.joinReceipt}\nOpen 👥 Crew in SharkStack Splash to claim your bonus!`);};
+  $('copyReceiptBtn').onclick=()=>{if(crew.joinReceipt)copyMessage(crew.joinReceipt);};
+  window.sharkShareUnavailable=()=>toast('Sharing is unavailable. Try copying your invitation.');
+  try {const ref=new URLSearchParams(window.location.search).get('ref');if(S.isCode(ref)&&!crew.referredBy)$('joinCodeInput').value=S.normalizeCode(ref);}catch(e){}
+  $('shopBtn').onclick=shop;$('openRewardsBtn').onclick=shop;
+  $('dailyBtn').onclick=()=>setModal('Daily Treasure',lastClaim===today()?'You already collected today’s daily treasure. Come back tomorrow for more!':`Claim ${M.RULES.dailyPearls} free Shark Pearls today. No purchase or ad needed.`,lastClaim===today()?[{label:'Back',onClick:closeModal}]:[{label:`🎁 Claim +${M.RULES.dailyPearls} Shark Pearls`,onClick:claimDaily},{label:'Later',onClick:closeModal,secondary:true}],'🎁');
+  // The player has seen the score screen; only here can a brief interstitial play.
+  // A no-fill/consent refusal must never block the next free game.
+  function continueAfterScore(){
+    closeModal();
+    if(pendingNewGame)return;
+    if(isAndroid && window.SharkAds.requestInterstitialBreak && A.eligible(pacing,Date.now(),Math.random())){
+      pendingNewGame=true;
+      window.SharkAds.requestInterstitialBreak();
+    }else startNew();
+  }
+  window.sharkInterstitialDone=(shown)=>{
+    if(!pendingNewGame)return;
+    pendingNewGame=false;
+    if(shown===true || shown==='true')A.recordShown(pacing,Date.now());
+    startNew();
+  };
+  function startNew(){game.restart();roundReported=false;rescueAdUsed=false;lastMoveReward=0;lastMoveLines=0;selected=0;preview=null;message('🦈 Feed the shark — clear rows & columns!');render();}
+  $('newBtn').onclick=()=>setModal('Start over?','Your current score will reset. Your best score and pearls will stay.',[{label:'Start a new game',onClick:()=>{closeModal();startNew();}},{label:'Keep playing',onClick:closeModal,secondary:true}],'🎮');
+  $('rotateBtn').onclick=()=>{if(game.rotate(selected)){preview=null;render();toast('↻ Block rotated');}};
+  $('hintBtn').onclick=()=>{const p=currentPiece();if(!p){toast('Select a block first');return;}let found=E.findFit(game.grid,p,false);if(!found){toast('↻ Try rotating this block!');return;}showPreview(found.x,found.y);toast('✧ Highlighted a place this block fits');};
+  $('undoBtn').onclick=()=>{if(pearls>=M.RULES.undoPrice+lastMoveReward&&game.undo()){pearls-=M.RULES.undoPrice+lastMoveReward;clears=Math.max(0,clears-lastMoveLines);lastMoveReward=0;lastMoveLines=0;preview=null;render();toast('↶ Move reversed · 3 pearls (earned rewards also reversed)');}else toast('Undo costs 3 pearls plus any earned on that move');};
+  $('settingsBtn').onclick=()=>{const options=[{label:sounds?'Turn sound OFF':'Turn sound ON',onClick:()=>{sounds=!sounds;save();closeModal();toast(`Sound ${sounds?'on':'off'}`);}}];if(isAndroid && window.SharkAds.showPrivacyOptions)options.push({label:'Ad privacy choices',onClick:()=>{closeModal();window.SharkAds.showPrivacyOptions();},secondary:true});options.push({label:'Privacy policy',onClick:()=>{save();window.location.href='privacy-policy.html';},secondary:true});options.push({label:'Close',onClick:closeModal,secondary:true});setModal('Captain’s Cabin',`Sound: ${sounds?'on':'off'} · Cleared lines: ${clears} · Best: ${game.highScore.toLocaleString()}. Pearls are virtual in-game rewards, not redeemable for money.`,options,'⚙️');};
+  // Drag gestures: one finger starts on a tray shape, release over an 8x8 board cell.
+  document.addEventListener('pointermove',e=>{if(!touchStart||e.pointerId!==touchStart.id)return;const moved=Math.hypot(e.clientX-touchStart.startX,e.clientY-touchStart.startY);if(moved<8&&!dragging)return;
+    if(!dragging){const piece=game.tray[touchStart.index];if(!piece)return;selected=touchStart.index;dragging=document.createElement('div');dragging.className='drag-ghost';dragging.appendChild(mini(piece));document.body.appendChild(dragging);}
+    dragging.style.left=`${e.clientX}px`;dragging.style.top=`${e.clientY-52}px`;
+    const under=document.elementFromPoint(e.clientX,e.clientY-52);const cell=under?.closest('.cell');if(cell){showPreview(Number(cell.dataset.x),Number(cell.dataset.y));}else if(preview){preview=null;renderBoard();}
+  },{passive:true});
+  document.addEventListener('pointerup',e=>{if(!touchStart||e.pointerId!==touchStart.id)return;if(dragging){const under=document.elementFromPoint(e.clientX,e.clientY-52),cell=under?.closest('.cell');dragging.remove();dragging=null;const was=touchStart;touchStart=null;selected=was.index;if(cell)attempt(Number(cell.dataset.x),Number(cell.dataset.y));else{preview=null;render();}}else touchStart=null;});
+  document.addEventListener('pointercancel',()=>{if(dragging)dragging.remove();dragging=null;touchStart=null;preview=null;render();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCrew();if(e.key.toLowerCase()==='r'){$('rotateBtn').click();}if(e.key==='Escape')closeModal();if('123'.includes(e.key)){const i=Number(e.key)-1;if(game.tray[i]){selected=i;render();}}});
+  if(billing)billing.ready();
+  function fitToViewport(){
+    const shell=document.querySelector('.shell');
+    if(!shell)return;
+    const style=getComputedStyle(shell);
+    const gap=parseFloat(style.rowGap)||0;
+    let others=0;
+    for(const child of shell.children){
+      if(child.classList.contains('board-frame') || getComputedStyle(child).display==='none')continue;
+      others+=child.getBoundingClientRect().height;
+    }
+    const visible=Array.from(shell.children).filter(child=>getComputedStyle(child).display!=='none').length;
+    const h=shell.clientHeight-(parseFloat(style.paddingTop)||0)-(parseFloat(style.paddingBottom)||0);
+    const available=Math.max(112,Math.floor(h-others-gap*Math.max(0,visible-1)-3));
+    const wide=Math.floor(shell.clientWidth-(parseFloat(style.paddingLeft)||0)-(parseFloat(style.paddingRight)||0));
+    shell.style.setProperty('--board-size',`${Math.max(112,Math.min(wide,available))}px`);
+  }
+  window.addEventListener('resize',fitToViewport);
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',fitToViewport);
+  requestAnimationFrame(fitToViewport);
+  if (location.protocol.startsWith('http') && !isAndroid && 'serviceWorker' in navigator) Promise.resolve().catch(()=>{});
+  render();fitToViewport();if(game.gameOver)showGameOver();
+})();
+</script>
+</body></html>
