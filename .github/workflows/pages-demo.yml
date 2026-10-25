@@ -1,10 +1,8 @@
 name: Publish game and YapThing websites
+# Normal low-cost hosting uses Settings > Pages > Deploy from a branch > main /docs.
+# This workflow is manual-only so missing Pages enablement does not generate
+# failed Actions runs and consume minutes for routine site commits.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'docs/**'
-      - '.github/workflows/pages-demo.yml'
   workflow_dispatch:
 permissions:
   contents: read
